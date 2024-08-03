@@ -19,9 +19,9 @@ class AvlSearchTree
 
         const Key & findMin() const;
         const Key & findMax() const;
-        bool & find(const Key & x) const;
+        const Value & find(const Key & x) const;
 
-        void printTree() const;
+        // void printTree() const;
 
         bool isEmpty() const;
         void makeEmpty();
@@ -32,41 +32,42 @@ class AvlSearchTree
     
     private:
 
-        Struct AVLNode{
+        struct AVLNode{
             Key key;
             Value value;
             AVLNode *left;
             AVLNode *right;
             int height;
-            AvlNode(const Key& theKey, const Value& theValue, AvlNode *lt, AvlNode *rt, int h=0)
+            AVLNode(const Key& theKey, const Value& theValue, AVLNode *lt, AVLNode *rt, int h=0)
                     : key(theKey), value(theValue), left(lt), right(rt), height(h) {}
         };
 
-        AvlNode *root;
+        AVLNode *root;
         const Key KEY_NOT_FOUND;
         const Value VALUE_NOT_FOUND;
 
-        const Value & elementAt(AvlNode*t, const Key&) const;
+        const Value & elementAt(AVLNode*t, const Key&) const;
 
-        void insert(const Key & x, const Value & y, AvlNode * & t ) const;
-        void remove(const Key & x, AvlNode * & t ) const;
+        void insert(const Key & x, const Value & y, AVLNode * & t ) const;
+        void remove(const Key & x, AVLNode * & t ) const;
 
-        AvlNode * findMin(AvlNode *t) const;
-        AvlNode * findMax(AvlNode *t) const;
-        bool find(const Key & x, AvlNode *t);
-                                                                                                        const;
-        void makeEmpty(AvlNode* & t) const;
-        void printTree(AvlNode *t) const;
-        AvlNode * clone(AvlNode *t) const;
+        AVLNode * findMin(AVLNode *t) const;
+        AVLNode * findMax(AVLNode *t) const;
+        //AVLNode<Key, Value> *find(const Key & x, AVLNode *t) const; 
+
+        void makeEmpty(AVLNode* & t) const;
+        void printTree(AVLNode *t) const;
+        AVLNode * clone(AVLNode *t) const;
 
         // Manipulations
-        int height(AvlNode<Comparable> *t) const;
-        void rotateWithLeftChild(AvlNode* & k2) const;
-        void rotateWithRightChild(AvlNode * & k1) const;
-        void doubleWithLeftChild(AvlNode * & k3) const;
-        void doubleWithRightChild(AvlNode * & k1) const;
-        void balance(AvlNode * & t) const;
+        int height(AVLNode *t) const;
+        void rotateWithLeftChild(AVLNode* & k2) const;
+        void rotateWithRightChild(AVLNode * & k1) const;
+        void doubleWithLeftChild(AVLNode * & k3) const;
+        void doubleWithRightChild(AVLNode * & k1) const;
+        void balance(AVLNode * & t) const;
 };
 
 #include "avl.cpp"
 #endif
+
