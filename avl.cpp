@@ -41,10 +41,11 @@ const Key & AvlSearchTree<Key, Value>::findMax() const
     return findMax(root)->key;
 }
 
+// Lets write function checking a word is in tree or not
 template <class Key, class Value>
-const Value & AvlSearchTree<Key, Value>::find(const Key &x) const
+bool AvlSearchTree<Key, Value>::isExists(const Key &x) const
 {
-    return find(x, root);
+    return isExists(x, root);
 }
 
 template <class Key, class Value>
@@ -162,9 +163,19 @@ typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::findMax
     return t;
 }
 
-//template <class Key, class Value>
-//AVLNode<Key, Value> *AvlSearchTree<Key, Value>::find(const Key &x, AVLNode *t) const
-
+// Lets write function checking a word is in tree or not
+template <class Key, class Value>
+bool AvlSearchTree<Key, Value>::isExists(const Key &x, AVLNode *t) const {
+    if (t == nullptr) {
+        return false;
+    } else if (x < t->key) {
+        return isExists(x, t->left);
+    } else if (t->key < x) {
+        return isExists(x, t->right);
+    } else {
+        return true;
+    }
+}
 
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::makeEmpty(AVLNode * &t) const

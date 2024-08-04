@@ -19,7 +19,7 @@ struct DocumentItem {
 
 struct WordItem {
 	string word;
-	vector<DocumentItem> docVector;
+	vector<DocumentItem> docInfoVec;
 
 	WordItem(const string& w) : word(w) {}
 };
@@ -34,8 +34,8 @@ class AvlSearchTree
 
         const Key & findMin() const;
         const Key & findMax() const;
-        const Value & find(const Key & x) const;
-
+        const Value & change(const Key & x) const;
+        bool isExists(const Key & x) const;
         // void printTree() const;
 
         bool isEmpty() const;
@@ -68,6 +68,9 @@ class AvlSearchTree
 
         AVLNode * findMin(AVLNode *t) const;
         AVLNode * findMax(AVLNode *t) const;
+
+        // Lets add isExist
+        bool isExists(const Key & x, AVLNode *t) const;
         //AVLNode<Key, Value> *find(const Key & x, AVLNode *t) const; 
 
         void makeEmpty(AVLNode* & t) const;

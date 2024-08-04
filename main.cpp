@@ -5,12 +5,33 @@
 #include <string>
 #include <random>
 #include <fstream>
+#include <sstream>
 
 #include "avl.h"
 
 using namespace std;
 
+bool isContaints(string word, vector<string> unique_Word_Vector){
+    for(int i = 0; i < unique_Word_Vector.size(); i++){
+        if(word == unique_Word_Vector[i]){
+            return true;
+        }
+    }
+    return false;
+}
+
+int getOccurenceNumber(string word, vector<string> Word_Vector){
+    int count = 0;
+    for(int i = 0; i < Word_Vector.size(); i++){
+        if(word == Word_Vector[i]){
+            count++;
+        }
+    }
+    return count;
+}
+
 int main(){
+    AvlSearchTree< string, WordItem *> myTree;
 
     cout << "Enter number of input files: ";
     int fileCount;
@@ -37,9 +58,9 @@ int main(){
             // for each word in line, we will add to tree if unique
             // split line by space
             string word_Single = "";
-            for(int i = 0; i < line.size(); i++){
+            for(int x = 0; x < line.size(); x++){
                 // if there is space, add that substr before as word to vector
-                if(line[i] == ' '){
+                if(line[x] == ' '){
                     // Lets check if word_Single is alphabetic
                     for(int j = 0; j < word_Single.size(); j++){
                         if(!isalpha(word_Single[j])){
@@ -56,22 +77,46 @@ int main(){
                     }
                 } else{
                     // Lets continue if there is any punctation
-                    if(ispunct(line[i])){
+                    if(ispunct(line[x])){
                         continue;
                     } else{
-                        word_Single += line[i];
+                        word_Single += line[x];
                     }
                 }
             }
 
         }
+
         
         // Now, we have the vector, lowered, no punctation, and alphabetic
-        
+        // WordItem struct is to check if how many times a word is in a document {{“a.txt”, 1}, {“b.txt”, 4}}
+        // For each word in vector, we will check if it is in the tree
+        // If it is, we will add the document to the vector with its count
+        // Lets create the vector
+        vector<string> unique_Word_Vector;
+        for(int i = 0; i < word_Vector.size(); i++){
+            // If not unique, we will add the document to the vector
+            if(!isContaints(word_Vector[i], unique_Word_Vector)){
+                unique_Word_Vector.push_back(word_Vector[i]);
+            }
+        }
 
-        // Lets create a tree
-        //AvlSearchTree<string, WordItem*> tree;
-
+        // But, when we go through second file, we will have to add the new occurence on that word
+        for(long long int y = 0; y < unique_Word_Vector.size(); y++){
+            int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
+            WordItem* wordItem = new WordItem(unique_Word_Vector[y]);
+            DocumentItem* docItem = new DocumentItem(fileName, count);
+            wordItem->docInfoVec.push_back(*docItem);
+            if(myTree.isExists(unique_Word_Vector[y])){
+                // It means we already have word_Item_Vector[y] in the tree
+                // We will add the document to the vector
+                cout << "HEy there" << endl;
+                //myTree.find(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+            } else {
+                // We will add the word to the tree
+                myTree.insert(unique_Word_Vector[y], wordItem);
+            }
+        }
    }
    
     while(true){
