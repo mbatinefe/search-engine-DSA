@@ -196,3 +196,72 @@ typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::clone(A
         return new AVLNode(t->key, t->value, clone(t->left), clone(t->right));
     }
 }
+
+template <class Key, class Value>
+int AvlSearchTree<Key, Value>::height(AVLNode *t) const
+{
+    if (t == nullptr){
+        return -1;
+    }else{
+        return t->height;
+    }
+}
+
+template <class Key, class Value>
+void AvlSearchTree<Key, Value>::rotateWithLeftChild(AVLNode * &k2) const
+{
+    AVLNode *k1 = k2->left;
+    k2->left = k1->right;
+    k1->right = k2;
+    k2->height = max(height(k2->left), height(k2->right)) + 1;
+    k1->height = max(height(k1->left), k2->height) + 1;
+    k2 = k1;
+}
+
+template <class Key, class Value>
+void AvlSearchTree<Key, Value>::rotateWithRightChild(AVLNode * &k1) const
+{
+    AVLNode *k2 = k1->right;
+    k1->right = k2->left;
+    k2->left = k1;
+    k1->height = max(height(k1->left), height(k1->right)) + 1;
+    k2->height = max(height(k2->right), k1->height) + 1;
+    k1 = k2;
+}
+
+template <class Key, class Value>
+void AvlSearchTree<Key, Value>::doubleWithLeftChild(AVLNode * &k3) const
+{
+    rotateWithRightChild(k3->left);
+    rotateWithLeftChild(k3);
+}
+
+template <class Key, class Value>
+void AvlSearchTree<Key, Value>::doubleWithRightChild(AVLNode * &k1) const
+{
+    rotateWithLeftChild(k1->right);
+    rotateWithRightChild(k1);
+}
+
+template <class Key, class Value>
+void AvlSearchTree<Key, Value>::balance(AVLNode * &t) const
+{
+    if(t == nullptr){
+        return;
+    }
+    if(height(t->left) - height(t->right) > 1){
+        if(height(t->left->left) >= height(t->left->right)){
+            rotateWithLeftChild(t);
+        }else{
+            doubleWithLeftChild(t);
+        }
+    }else{
+        if(height(t->right) - height(t->left) > 1){
+            if(height(t->right->right) >= height(t->right->left)){
+                rotateWithRightChild(t);
+            }else{
+                doubleWithRightChild(t);
+            }
+        }
+    }
+}
