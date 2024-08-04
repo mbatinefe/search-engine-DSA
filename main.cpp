@@ -58,28 +58,27 @@ int main(){
             // for each word in line, we will add to tree if unique
             // split line by space
             string word_Single = "";
-            for(int x = 0; x < line.size(); x++){
+            for(int x = 0; x < line.size()+1; x++){
                 // if there is space, add that substr before as word to vector
-                if(line[x] == ' '){
+                if(line[x] == ' ' || x == line.size()){
                     // Lets check if word_Single is alphabetic
+                    bool isAlphabetic = true;
                     for(int j = 0; j < word_Single.size(); j++){
                         if(!isalpha(word_Single[j])){
-                            cout << "Word is not alphabetic" << endl;
-                        } else{
-                            // Word is aplhabetic and punctation is ignored
-                            // Lets lowercase the word
-                            for(int k = 0; k < word_Single.size(); k++){
-                                word_Single[k] = tolower(word_Single[k]);
-                            }
-                            word_Vector.push_back(word_Single);
+                            isAlphabetic = false;
                         }
-                        word_Single = "";
                     }
-                } else{
+                    if(isAlphabetic){
+                        word_Vector.push_back(word_Single);
+                    }
+                    word_Single = "";
+                }
+                else{
                     // Lets continue if there is any punctation
                     if(ispunct(line[x])){
                         continue;
                     } else{
+                        line[x] = tolower(line[x]);
                         word_Single += line[x];
                     }
                 }
@@ -102,7 +101,7 @@ int main(){
         }
 
         // But, when we go through second file, we will have to add the new occurence on that word
-        for(long long int y = 0; y < unique_Word_Vector.size(); y++){
+        for(int y = 0; y < unique_Word_Vector.size(); y++){
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
             WordItem* wordItem = new WordItem(unique_Word_Vector[y]);
             DocumentItem* docItem = new DocumentItem(fileName, count);
@@ -110,15 +109,19 @@ int main(){
             if(myTree.isExists(unique_Word_Vector[y])){
                 // It means we already have word_Item_Vector[y] in the tree
                 // We will add the document to the vector
-                cout << "HEy there" << endl;
+                cout << "HEy there"  << unique_Word_Vector[y] << endl;
                 //myTree.find(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
             } else {
                 // We will add the word to the tree
                 myTree.insert(unique_Word_Vector[y], wordItem);
             }
+
+
         }
    }
-   
+    
+    myTree.printTree();
+
     while(true){
         cout << endl<<"Enter queried words in one line: " << endl;
         cin.ignore(); // what does this do? 
@@ -140,8 +143,5 @@ int main(){
             break;
         }
     }
-
-
-
 
 }

@@ -36,13 +36,13 @@ class AvlSearchTree
         const Key & findMax() const;
         const Value & change(const Key & x) const;
         bool isExists(const Key & x) const;
-        // void printTree() const;
+        void printTree() const;
 
         bool isEmpty() const;
         void makeEmpty();
         void insert(const Key & x, const Value & y);
         void remove(const Key & x);
-
+        
         const AvlSearchTree & operator=(const AvlSearchTree &rhs);
     
     private:
@@ -58,8 +58,6 @@ class AvlSearchTree
         };
 
         AVLNode *root;
-        const Key KEY_NOT_FOUND = nullptr;
-        const Value VALUE_NOT_FOUND = nullptr;
 
         const Value & elementAt(AVLNode*t, const Key&) const;
 

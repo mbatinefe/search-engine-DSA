@@ -49,6 +49,16 @@ bool AvlSearchTree<Key, Value>::isExists(const Key &x) const
 }
 
 template <class Key, class Value>
+void AvlSearchTree<Key, Value>::printTree() const
+{
+    if(isEmpty()){
+        cout << "Empty tree" << endl;
+    }else{
+        printTree(root);
+    }
+}
+
+template <class Key, class Value>
 bool AvlSearchTree<Key, Value>::isEmpty() const
 {
     if(root == nullptr){
@@ -94,7 +104,7 @@ template <class Key, class Value>
 const Value & AvlSearchTree<Key, Value>::elementAt(AVLNode *t, const Key &x) const
 {
     if(t == nullptr){
-        return VALUE_NOT_FOUND;
+        return nullptr;
     }else if(x < t->key){
         return elementAt(t->left, x);
     }else if(t->key < x){
@@ -166,13 +176,14 @@ typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::findMax
 // Lets write function checking a word is in tree or not
 template <class Key, class Value>
 bool AvlSearchTree<Key, Value>::isExists(const Key &x, AVLNode *t) const {
-    if (t == nullptr) {
+    // Check if x is in the tree
+    if(t == nullptr){
         return false;
-    } else if (x < t->key) {
+    } else if(x < t->key){
         return isExists(x, t->left);
-    } else if (t->key < x) {
+    } else if(t->key < x){
         return isExists(x, t->right);
-    } else {
+    } else{
         return true;
     }
 }
@@ -191,9 +202,18 @@ void AvlSearchTree<Key, Value>::makeEmpty(AVLNode * &t) const
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::printTree(AVLNode *t) const
 {
+    // T->value is WordItem
+    // print T->value->word
+    // print T->value->docInfoVec
     if(t != nullptr){
         printTree(t->left);
-        cout << t->key << endl;
+        cout << "Word: ";
+        cout << t->value->word << " ------- ";
+        cout << "Document Information: ";
+        for(unsigned int i = 0; i < t->value->docInfoVec.size(); i++){
+            cout << t->value->docInfoVec[i].documentName << " ";
+            cout << t->value->docInfoVec[i].count << endl;
+        }
         printTree(t->right);
     }
 }
