@@ -12,7 +12,7 @@
 using namespace std;
 
 bool isContaints(string word, vector<string> unique_Word_Vector){
-    for(int i = 0; i < unique_Word_Vector.size(); i++){
+    for(long long unsigned int i = 0; i < unique_Word_Vector.size(); i++){
         if(word == unique_Word_Vector[i]){
             return true;
         }
@@ -22,7 +22,7 @@ bool isContaints(string word, vector<string> unique_Word_Vector){
 
 int getOccurenceNumber(string word, vector<string> Word_Vector){
     int count = 0;
-    for(int i = 0; i < Word_Vector.size(); i++){
+    for(long long unsigned int i = 0; i < Word_Vector.size(); i++){
         if(word == Word_Vector[i]){
             count++;
         }
@@ -58,12 +58,12 @@ int main(){
             // for each word in line, we will add to tree if unique
             // split line by space
             string word_Single = "";
-            for(int x = 0; x < line.size()+1; x++){
+            for(long long unsigned int x = 0; x < line.size()+1; x++){
                 // if there is space, add that substr before as word to vector
                 if(line[x] == ' ' || x == line.size()){
                     // Lets check if word_Single is alphabetic
                     bool isAlphabetic = true;
-                    for(int j = 0; j < word_Single.size(); j++){
+                    for(long long unsigned int j = 0; j < word_Single.size(); j++){
                         if(!isalpha(word_Single[j])){
                             isAlphabetic = false;
                         }
@@ -93,7 +93,7 @@ int main(){
         // If it is, we will add the document to the vector with its count
         // Lets create the vector
         vector<string> unique_Word_Vector;
-        for(int i = 0; i < word_Vector.size(); i++){
+        for(long long unsigned int i = 0; i < word_Vector.size(); i++){
             // If not unique, we will add the document to the vector
             if(!isContaints(word_Vector[i], unique_Word_Vector)){
                 unique_Word_Vector.push_back(word_Vector[i]);
@@ -101,7 +101,7 @@ int main(){
         }
 
         // But, when we go through second file, we will have to add the new occurence on that word
-        for(int y = 0; y < unique_Word_Vector.size(); y++){
+        for(long long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
             WordItem* wordItem = new WordItem(unique_Word_Vector[y]);
             DocumentItem* docItem = new DocumentItem(fileName, count);
@@ -124,8 +124,8 @@ int main(){
 
     while(true){
         cout << endl<<"Enter queried words in one line: " << endl;
-        cin.ignore(); // what does this do? 
-        // 
+        cin.ignore();
+
         getline(cin, query);
 
         cout<< query << endl;
