@@ -1,19 +1,34 @@
 // Mustafa Batin EFE - 29272
 // CS300 - Data Structures - Homework 2
 
-#ifndef AVL_H
-#define AVL_H
+#ifndef _AVL_H
+#define _AVL_H
 
 #include <iostream>
+#include <vector>
 #include <string>
 
 using namespace std;
+
+struct DocumentItem {
+	string documentName;
+	int count;
+
+	DocumentItem(const string& n, int c) : documentName(n), count(c) {}
+};
+
+struct WordItem {
+	string word;
+	vector<DocumentItem> docVector;
+
+	WordItem(const string& w) : word(w) {}
+};
 
 template <class Key, class Value >
 class AvlSearchTree
 {
     public:
-        explicit AvlSearchTree();
+        AvlSearchTree();
         AvlSearchTree(const AvlSearchTree & rhs);
         ~AvlSearchTree();
 
@@ -43,8 +58,8 @@ class AvlSearchTree
         };
 
         AVLNode *root;
-        const Key KEY_NOT_FOUND;
-        const Value VALUE_NOT_FOUND;
+        const Key KEY_NOT_FOUND = nullptr;
+        const Value VALUE_NOT_FOUND = nullptr;
 
         const Value & elementAt(AVLNode*t, const Key&) const;
 
