@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <stdexcept>
 #include "avl.h"
 
 using namespace std;
@@ -39,6 +40,12 @@ template <class Key, class Value>
 const Key & AvlSearchTree<Key, Value>::findMax() const
 {
     return findMax(root)->key;
+}
+
+template <class Key, class Value>
+const Value & AvlSearchTree<Key, Value>::elementAt(const Key &x) const
+{
+    return elementAt(x, root);
 }
 
 // Lets write function checking a word is in tree or not
@@ -101,17 +108,18 @@ const AvlSearchTree<Key, Value> & AvlSearchTree<Key, Value>::operator=(const Avl
 */
 
 template <class Key, class Value>
-const Value & AvlSearchTree<Key, Value>::elementAt(AVLNode *t, const Key &x) const
+const Value & AvlSearchTree<Key, Value>::elementAt(const Key & x, AVLNode * t) const
 {
-    if(t == nullptr){
-        return nullptr;
-    }else if(x < t->key){
-        return elementAt(t->left, x);
-    }else if(t->key < x){
-        return elementAt(t->right, x);
-    }else{
-        return t->value;
+    while (t != nullptr) {
+        if (x < t->key) {
+            return elementAt(x, t->left);
+        } else if (t->key < x) {
+            return elementAt(x, t->right);
+        } else {
+            return t->value;
+        }
     }
+    throw std::runtime_error("Key not found in AVL tree");
 }
 
 template <class Key, class Value>
@@ -188,6 +196,7 @@ bool AvlSearchTree<Key, Value>::isExists(const Key &x, AVLNode *t) const {
     }
 }
 
+
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::makeEmpty(AVLNode * &t) const
 {
@@ -212,8 +221,9 @@ void AvlSearchTree<Key, Value>::printTree(AVLNode *t) const
         cout << "Document Information: ";
         for(unsigned int i = 0; i < t->value->docInfoVec.size(); i++){
             cout << t->value->docInfoVec[i].documentName << " ";
-            cout << t->value->docInfoVec[i].count << endl;
+            cout << t->value->docInfoVec[i].count << " ";
         }
+        cout << endl;
         printTree(t->right);
     }
 }

@@ -86,7 +86,6 @@ int main(){
 
         }
 
-        
         // Now, we have the vector, lowered, no punctation, and alphabetic
         // WordItem struct is to check if how many times a word is in a document {{“a.txt”, 1}, {“b.txt”, 4}}
         // For each word in vector, we will check if it is in the tree
@@ -109,7 +108,11 @@ int main(){
             if(myTree.isExists(unique_Word_Vector[y])){
                 // It means we already have word_Item_Vector[y] in the tree
                 // We will add the document to the vector
-                cout << "HEy there"  << unique_Word_Vector[y] << endl;
+                //cout << "HEy there"  << unique_Word_Vector[y] << endl;
+                //myTree.change(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+                
+                myTree.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+                
                 //myTree.find(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
             } else {
                 // We will add the word to the tree
@@ -124,23 +127,47 @@ int main(){
 
     while(true){
         cout << endl<<"Enter queried words in one line: " << endl;
-        cin.ignore();
 
+        vector<string> queryWords;
+        // Lets assign getline into query
         getline(cin, query);
+        while(query.size() != 0){
+            string word = "";
+            for(long long unsigned int i = 0; i < query.size(); i++){
+                if(query[i] == ' '){
+                    break;
+                } else{
+                    word += query[i];
+                }
+            }
+            // Delete the word from query
+            query.erase(0, word.size()+1);
+            queryWords.push_back(word);
+        }
 
-        cout<< query << endl;
-        // Get first word
-        string word = query.substr(0, query.find(" "));
-        
-        cout << word << endl;
-        if(word == "ENDOFINPUT"){
+        if(queryWords[0] == "ENDOFINPUT"){
             break;
-        } else if (word == "REMOVE"){
+        } else if (queryWords[0] == "REMOVE"){
             cout << "Time to Remove" << endl;
             break;  
         } else{
-            cout << "Time to Insert" << endl;
-            break;
+            for (int q = 0; q < queryWords.size(); q++){
+                string word = queryWords[q];
+                // We will search the word in the tree
+                if(myTree.isExists(word)){
+                    // We will print the document information
+                    WordItem* wordItem = myTree.elementAt(word);
+                    cout << "Word: " << wordItem->word << " ------- ";
+                    cout << "Document Information: ";
+                    for(unsigned int i = 0; i < wordItem->docInfoVec.size(); i++){
+                        cout << wordItem->docInfoVec[i].documentName << " ";
+                        cout << wordItem->docInfoVec[i].count << " ";
+                    }
+                    cout << endl;
+                } else{
+                    cout << "Word: "<< word <<" not found" << endl;
+                }
+            }
         }
     }
 
