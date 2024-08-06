@@ -30,6 +30,13 @@ int getOccurenceNumber(string word, vector<string> Word_Vector){
     return count;
 }
 
+string toLower(string word){
+    for(long long unsigned int i = 0; i < word.size(); i++){
+        word[i] = tolower(word[i]);
+    }
+    return word;
+}
+
 int main(){
     AvlSearchTree< string, WordItem *> myTree;
 
@@ -126,8 +133,7 @@ int main(){
     myTree.printTree();
 
     while(true){
-        cout << endl<<"Enter queried words in one line: " << endl;
-
+        cout << endl<<"Enter queried words in one line: ";
         vector<string> queryWords;
         // Lets assign getline into query
         getline(cin, query);
@@ -151,23 +157,67 @@ int main(){
             cout << "Time to Remove" << endl;
             break;  
         } else{
+
+            bool isQueryFullExist = true;
+            // Lets create wordItem list
+            vector<WordItem*> tempWordItemVec;
             for (int q = 0; q < queryWords.size(); q++){
-                string word = queryWords[q];
+                string word = toLower(queryWords[q]);
                 // We will search the word in the tree
                 if(myTree.isExists(word)){
+
                     // We will print the document information
                     WordItem* wordItem = myTree.elementAt(word);
-                    cout << "Word: " << wordItem->word << " ------- ";
-                    cout << "Document Information: ";
+
+                    //cout << "Word: " << wordItem->word << " ------- ";
+                    //cout << "Document Information: ";
                     for(unsigned int i = 0; i < wordItem->docInfoVec.size(); i++){
-                        cout << wordItem->docInfoVec[i].documentName << " ";
-                        cout << wordItem->docInfoVec[i].count << " ";
+                        bool isExistFile = false;
+                        int indexOfExistFile = -1;
+                        for(unsigned int j = 0; j < tempWordItemVec.size(); j++){
+                            if(tempWordItemVec[j]->word == wordItem->docInfoVec[i].documentName){
+                                isExistFile = true;
+                                indexOfExistFile = j;
+                                break;
+                            }
+                        }
+                        if(!isExistFile){
+                            WordItem* wordItemTemp = new WordItem(wordItem->docInfoVec[i].documentName);
+                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[i].count);
+                            wordItemTemp->docInfoVec.push_back(*docItemTemp);
+                            tempWordItemVec.push_back(wordItemTemp);
+                        } else{
+                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[i].count);
+                            tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
+                        }
+                        //cout << wordItem->docInfoVec[i].documentName << " ";
+                        //cout << wordItem->docInfoVec[i].count << " ";
                     }
-                    cout << endl;
                 } else{
-                    cout << "Word: "<< word <<" not found" << endl;
+                    // cout << "Word: "<< word <<" not found" << endl;
+                    isQueryFullExist = false;
                 }
             }
+
+            if(!isQueryFullExist){
+                cout << "No document contains the given query" << endl;
+            } else {
+                // Lets print the document information
+                for(unsigned int i = 0; i < tempWordItemVec.size(); i++){
+                    cout << "in Document " << tempWordItemVec[i]->word << ", ";
+                    for(unsigned int j= 0; j < tempWordItemVec[i]->docInfoVec.size(); j++){
+                        cout << tempWordItemVec[i]->docInfoVec[j].documentName << " found ";
+                        cout << tempWordItemVec[i]->docInfoVec[j].count << " times";
+                        if(j+1 == tempWordItemVec[i]->docInfoVec.size()){
+                            cout << ".";
+                        } else{
+                            cout << ", ";
+                        }
+                    }
+                    cout << endl;
+                }
+            }
+
         }
     }
 
