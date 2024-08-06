@@ -22,6 +22,7 @@ struct WordItem {
 	vector<DocumentItem> docInfoVec;
 
 	WordItem(const string& w) : word(w) {}
+
 };
 
 template <class Key, class Value >
@@ -87,6 +88,5 @@ class AvlSearchTree
         void balance(AVLNode * & t) const;
 };
 
-#include "avl.cpp"
 #endif
 

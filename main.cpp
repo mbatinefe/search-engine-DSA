@@ -7,7 +7,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "avl.h"
+#include "avl.cpp"
 
 using namespace std;
 
@@ -151,7 +151,11 @@ int main(){
             queryWords.push_back(word);
         }
 
+        vector<WordItem*> tempWordItemVec;
+
         if(queryWords[0] == "ENDOFINPUT"){
+            // We do not need to delete the tree since our deconstructor will do it
+            // It will call makeEmpty function
             break;
         } else if (queryWords[0] == "REMOVE"){
             myTree.remove(queryWords[1]); 
@@ -159,7 +163,7 @@ int main(){
 
             bool isQueryFullExist = true;
             // Lets create wordItem list
-            vector<WordItem*> tempWordItemVec;
+
             for (int q = 0; q < queryWords.size(); q++){
                 string word = toLower(queryWords[q]);
                 // We will search the word in the tree
@@ -189,6 +193,7 @@ int main(){
                             DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[i].count);
                             tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                         }
+                
                         //cout << wordItem->docInfoVec[i].documentName << " ";
                         //cout << wordItem->docInfoVec[i].count << " ";
                     }
@@ -216,8 +221,16 @@ int main(){
                     cout << endl;
                 }
             }
-
         }
+        // Lets delete the tempWordItemVec to not leak memory
+        // We need to delete reversely from tempWordItemVec
+        for (int i = tempWordItemVec.size() - 1; i >= 0; i--) {
+            // Delete the dynamically allocated WordItem
+            delete tempWordItemVec[i];
+        }
+        tempWordItemVec.clear();
     }
+
+    return 0;
 
 }
