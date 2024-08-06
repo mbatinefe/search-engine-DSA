@@ -154,8 +154,7 @@ int main(){
         if(queryWords[0] == "ENDOFINPUT"){
             break;
         } else if (queryWords[0] == "REMOVE"){
-            cout << "Time to Remove" << endl;
-            break;  
+            myTree.remove(queryWords[1]); 
         } else{
 
             bool isQueryFullExist = true;

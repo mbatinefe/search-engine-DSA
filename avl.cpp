@@ -154,8 +154,27 @@ void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y, AVLNode * &
 
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::remove(const Key &x, AVLNode * &t) const
-{
+{   
 
+    if(x < t->key){
+        remove(x, t->left);
+    }else if(t->key < x){
+        remove(x, t->right);
+    }else if(t->left != nullptr && t->right != nullptr){
+        t->key = findMin(t->right)->key;
+        remove(t->key, t->right);
+    }else{
+        AVLNode *removeNode = t;
+        if (t->left != nullptr){
+            t = t->left;
+        } else if (t->right != nullptr){
+            t = t->right;
+        } else{
+            t = nullptr;
+        }
+        delete removeNode;
+    }
+    balance(t);
 }
 
 template <class Key, class Value>
