@@ -12,7 +12,7 @@
 using namespace std;
 
 bool isContaints(string word, vector<string> unique_Word_Vector){
-    for(long long unsigned int i = 0; i < unique_Word_Vector.size(); i++){
+    for(long unsigned int i = 0; i < unique_Word_Vector.size(); i++){
         if(word == unique_Word_Vector[i]){
             return true;
         }
@@ -22,7 +22,7 @@ bool isContaints(string word, vector<string> unique_Word_Vector){
 
 int getOccurenceNumber(string word, vector<string> Word_Vector){
     int count = 0;
-    for(long long unsigned int i = 0; i < Word_Vector.size(); i++){
+    for(long unsigned int i = 0; i < Word_Vector.size(); i++){
         if(word == Word_Vector[i]){
             count++;
         }
@@ -31,7 +31,7 @@ int getOccurenceNumber(string word, vector<string> Word_Vector){
 }
 
 string toLower(string word){
-    for(long long unsigned int i = 0; i < word.size(); i++){
+    for(long unsigned int i = 0; i < word.size(); i++){
         word[i] = tolower(word[i]);
     }
     return word;
@@ -65,12 +65,12 @@ int main(){
             // for each word in line, we will add to tree if unique
             // split line by space
             string word_Single = "";
-            for(long long unsigned int x = 0; x < line.size()+1; x++){
+            for(long unsigned int x = 0; x < line.size()+1; x++){
                 // if there is space, add that substr before as word to vector
                 if(line[x] == ' ' || x == line.size()){
                     // Lets check if word_Single is alphabetic
                     bool isAlphabetic = true;
-                    for(long long unsigned int j = 0; j < word_Single.size(); j++){
+                    for(long unsigned int j = 0; j < word_Single.size(); j++){
                         if(!isalpha(word_Single[j])){
                             isAlphabetic = false;
                         }
@@ -99,15 +99,15 @@ int main(){
         // If it is, we will add the document to the vector with its count
         // Lets create the vector
         vector<string> unique_Word_Vector;
-        for(long long unsigned int i = 0; i < word_Vector.size(); i++){
+        for(long unsigned int m = 0; m < word_Vector.size(); m++){
             // If not unique, we will add the document to the vector
-            if(!isContaints(word_Vector[i], unique_Word_Vector)){
-                unique_Word_Vector.push_back(word_Vector[i]);
+            if(!isContaints(word_Vector[m], unique_Word_Vector)){
+                unique_Word_Vector.push_back(word_Vector[m]);
             }
         }
 
         // But, when we go through second file, we will have to add the new occurence on that word
-        for(long long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
+        for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
             WordItem* wordItem = new WordItem(unique_Word_Vector[y]);
             DocumentItem* docItem = new DocumentItem(fileName, count);
@@ -139,11 +139,11 @@ int main(){
         getline(cin, query);
         while(query.size() != 0){
             string word = "";
-            for(long long unsigned int i = 0; i < query.size(); i++){
-                if(query[i] == ' '){
+            for(long unsigned int k = 0; k < query.size(); k++){
+                if(query[k] == ' '){
                     break;
                 } else{
-                    word += query[i];
+                    word += query[k];
                 }
             }
             // Delete the word from query
@@ -152,7 +152,7 @@ int main(){
         }
 
         vector<WordItem*> tempWordItemVec;
-
+        
         if(queryWords[0] == "ENDOFINPUT"){
             // We do not need to delete the tree since our deconstructor will do it
             // It will call makeEmpty function
@@ -164,7 +164,7 @@ int main(){
             bool isQueryFullExist = true;
             // Lets create wordItem list
 
-            for (int q = 0; q < queryWords.size(); q++){
+            for (long unsigned int q = 0; q < queryWords.size(); q++){
                 string word = toLower(queryWords[q]);
                 // We will search the word in the tree
                 if(myTree.isExists(word)){
@@ -174,23 +174,23 @@ int main(){
 
                     //cout << "Word: " << wordItem->word << " ------- ";
                     //cout << "Document Information: ";
-                    for(unsigned int i = 0; i < wordItem->docInfoVec.size(); i++){
+                    for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
                         bool isExistFile = false;
                         int indexOfExistFile = -1;
-                        for(unsigned int j = 0; j < tempWordItemVec.size(); j++){
-                            if(tempWordItemVec[j]->word == wordItem->docInfoVec[i].documentName){
+                        for(long unsigned int j = 0; j < tempWordItemVec.size(); j++){
+                            if(tempWordItemVec[j]->word == wordItem->docInfoVec[u].documentName){
                                 isExistFile = true;
                                 indexOfExistFile = j;
                                 break;
                             }
                         }
                         if(!isExistFile){
-                            WordItem* wordItemTemp = new WordItem(wordItem->docInfoVec[i].documentName);
-                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[i].count);
+                            WordItem* wordItemTemp = new WordItem(wordItem->docInfoVec[u].documentName);
+                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[u].count);
                             wordItemTemp->docInfoVec.push_back(*docItemTemp);
                             tempWordItemVec.push_back(wordItemTemp);
                         } else{
-                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[i].count);
+                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[u].count);
                             tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                         }
                 
@@ -207,9 +207,9 @@ int main(){
                 cout << "No document contains the given query" << endl;
             } else {
                 // Lets print the document information
-                for(unsigned int i = 0; i < tempWordItemVec.size(); i++){
+                for(long unsigned int i = 0; i < tempWordItemVec.size(); i++){
                     cout << "in Document " << tempWordItemVec[i]->word << ", ";
-                    for(unsigned int j= 0; j < tempWordItemVec[i]->docInfoVec.size(); j++){
+                    for(long unsigned int j= 0; j < tempWordItemVec[i]->docInfoVec.size(); j++){
                         cout << tempWordItemVec[i]->docInfoVec[j].documentName << " found ";
                         cout << tempWordItemVec[i]->docInfoVec[j].count << " times";
                         if(j+1 == tempWordItemVec[i]->docInfoVec.size()){
@@ -224,7 +224,7 @@ int main(){
         }
         // Lets delete the tempWordItemVec to not leak memory
         // We need to delete reversely from tempWordItemVec
-        for (int i = tempWordItemVec.size() - 1; i >= 0; i--) {
+        for (long unsigned int i = tempWordItemVec.size() - 1; i >= 0; i--) {
             // Delete the dynamically allocated WordItem
             delete tempWordItemVec[i];
         }
