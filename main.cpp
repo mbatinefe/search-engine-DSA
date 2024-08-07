@@ -153,12 +153,17 @@ int main(){
 
         vector<shared_ptr<WordItem>> tempWordItemVec;
         
-        if(queryWords[0] == "ENDOFINPUT"){
+        if(queryWords[0] == "ENDOFINPUT" || queryWords[0] == "endofinput"){
             // We do not need to delete the tree since our deconstructor will do it
             // It will call makeEmpty function
             break;
-        } else if (queryWords[0] == "REMOVE"){
-            myTree.remove(queryWords[1]); 
+        } else if (queryWords[0] == "REMOVE" || queryWords[0] == "remove"){
+            if(myTree.isExists(queryWords[1])){
+                myTree.remove(toLower(queryWords[1])); 
+            } else{
+                cout << "Word to be removed is not found." << endl;
+            }
+
         } else{
 
             bool isQueryFullExistAtAll = true;

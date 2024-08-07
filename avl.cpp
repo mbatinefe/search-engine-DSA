@@ -173,8 +173,8 @@ void AvlSearchTree<Key, Value>::remove(const Key &x, AVLNode * &t) const
             t = nullptr;
         }
         delete removeNode;
+        balance(t);
     }
-    balance(t);
 }
 
 template <class Key, class Value>
