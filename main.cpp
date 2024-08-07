@@ -161,7 +161,7 @@ int main(){
             myTree.remove(queryWords[1]); 
         } else{
 
-            bool isQueryFullExist = true;
+            bool isQueryFullExistAtAll = true;
             // Lets create wordItem list
 
             for (long unsigned int q = 0; q < queryWords.size(); q++){
@@ -194,31 +194,52 @@ int main(){
                             tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                         }
                 
-                        //cout << wordItem->docInfoVec[i].documentName << " ";
-                        //cout << wordItem->docInfoVec[i].count << " ";
                     }
                 } else{
                     // cout << "Word: "<< word <<" not found" << endl;
-                    isQueryFullExist = false;
+                    isQueryFullExistAtAll = false;
                 }
             }
 
-            if(!isQueryFullExist){
+            if(!isQueryFullExistAtAll){
                 cout << "No document contains the given query" << endl;
             } else {
-                // Lets print the document information
-                for(long unsigned int i = 0; i < tempWordItemVec.size(); i++){
-                    cout << "in Document " << tempWordItemVec[i]->word << ", ";
-                    for(long unsigned int j= 0; j < tempWordItemVec[i]->docInfoVec.size(); j++){
-                        cout << tempWordItemVec[i]->docInfoVec[j].documentName << " found ";
-                        cout << tempWordItemVec[i]->docInfoVec[j].count << " times";
-                        if(j+1 == tempWordItemVec[i]->docInfoVec.size()){
-                            cout << ".";
-                        } else{
-                            cout << ", ";
+
+                int isQueryFullExistSameDoc = 0;
+                // if all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
+                // we will print the document name
+                for(long unsigned int u = 0; u < tempWordItemVec.size(); u++){
+
+                    int queryCount = queryWords.size();
+                    for(long unsigned int j = 0; j < tempWordItemVec[u]->docInfoVec.size(); j++){
+                        for(long unsigned int e = 0; e < queryWords.size(); e++){
+                            if(toLower(queryWords[e]) == tempWordItemVec[u]->docInfoVec[j].documentName){
+                                queryCount--;
+                            }
                         }
                     }
-                    cout << endl;
+
+                    if(queryCount != 0){
+                        continue;
+                    } else {
+                        isQueryFullExistSameDoc++;
+                        cout << "in Document " << tempWordItemVec[u]->word << ", ";
+                        for(long unsigned int z= 0; z < tempWordItemVec[u]->docInfoVec.size(); z++){
+                            cout << tempWordItemVec[u]->docInfoVec[z].documentName << " found ";
+                            cout << tempWordItemVec[u]->docInfoVec[z].count << " times";
+                            if(z+1 == tempWordItemVec[u]->docInfoVec.size()){
+                                cout << ".";
+                            } else{
+                                cout << ", ";
+                            }
+                        }
+                        cout << endl;
+                    }
+
+                }
+
+                if(isQueryFullExistSameDoc == 0){
+                    cout << "No document contains the given query" << endl;
                 }
             }
         }
