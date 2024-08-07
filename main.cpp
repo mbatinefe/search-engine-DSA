@@ -6,6 +6,8 @@
 #include <random>
 #include <fstream>
 #include <sstream>
+#include <memory>
+#include <vector>
 
 #include "avl.cpp"
 
@@ -38,7 +40,7 @@ string toLower(string word){
 }
 
 int main(){
-    AvlSearchTree< string, WordItem *> myTree;
+    AvlSearchTree< string, shared_ptr<WordItem> > myTree;
 
     cout << "Enter number of input files: ";
     int fileCount;
@@ -109,8 +111,8 @@ int main(){
         // But, when we go through second file, we will have to add the new occurence on that word
         for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
-            WordItem* wordItem = new WordItem(unique_Word_Vector[y]);
-            DocumentItem* docItem = new DocumentItem(fileName, count);
+            auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
+            auto docItem = make_shared<DocumentItem>(fileName, count);
             wordItem->docInfoVec.push_back(*docItem);
             if(myTree.isExists(unique_Word_Vector[y])){
                 // It means we already have word_Item_Vector[y] in the tree
@@ -125,8 +127,6 @@ int main(){
                 // We will add the word to the tree
                 myTree.insert(unique_Word_Vector[y], wordItem);
             }
-
-
         }
    }
     
@@ -151,7 +151,7 @@ int main(){
             queryWords.push_back(word);
         }
 
-        vector<WordItem*> tempWordItemVec;
+        vector<shared_ptr<WordItem>> tempWordItemVec;
         
         if(queryWords[0] == "ENDOFINPUT"){
             // We do not need to delete the tree since our deconstructor will do it
@@ -170,7 +170,7 @@ int main(){
                 if(myTree.isExists(word)){
 
                     // We will print the document information
-                    WordItem* wordItem = myTree.elementAt(word);
+                    auto wordItem = myTree.elementAt(word);
 
                     //cout << "Word: " << wordItem->word << " ------- ";
                     //cout << "Document Information: ";
@@ -185,12 +185,12 @@ int main(){
                             }
                         }
                         if(!isExistFile){
-                            WordItem* wordItemTemp = new WordItem(wordItem->docInfoVec[u].documentName);
-                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[u].count);
+                            auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
+                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
                             wordItemTemp->docInfoVec.push_back(*docItemTemp);
                             tempWordItemVec.push_back(wordItemTemp);
                         } else{
-                            DocumentItem* docItemTemp = new DocumentItem(word, wordItem->docInfoVec[u].count);
+                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
                             tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                         }
                 
@@ -221,12 +221,6 @@ int main(){
                     cout << endl;
                 }
             }
-        }
-        // Lets delete the tempWordItemVec to not leak memory
-        // We need to delete reversely from tempWordItemVec
-        for (long unsigned int i = 0; i < tempWordItemVec.size(); i++){
-            // Delete the dynamically allocated WordItem
-            delete tempWordItemVec[i];
         }
         tempWordItemVec.clear();
     }
