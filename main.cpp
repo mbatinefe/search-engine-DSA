@@ -224,7 +224,7 @@ int main(){
         }
         // Lets delete the tempWordItemVec to not leak memory
         // We need to delete reversely from tempWordItemVec
-        for (long unsigned int i = tempWordItemVec.size() - 1; i >= 0; i--) {
+        for (long unsigned int i = 0; i < tempWordItemVec.size(); i++){
             // Delete the dynamically allocated WordItem
             delete tempWordItemVec[i];
         }
