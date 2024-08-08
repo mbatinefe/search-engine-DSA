@@ -13,6 +13,7 @@
 
 using namespace std;
 
+// Following function will check if the word is in the vector
 bool isContaints(string word, vector<string> unique_Word_Vector){
     for(long unsigned int i = 0; i < unique_Word_Vector.size(); i++){
         if(word == unique_Word_Vector[i]){
@@ -22,6 +23,7 @@ bool isContaints(string word, vector<string> unique_Word_Vector){
     return false;
 }
 
+// Following function will return the occurence number of the word in the vector
 int getOccurenceNumber(string word, vector<string> Word_Vector){
     int count = 0;
     for(long unsigned int i = 0; i < Word_Vector.size(); i++){
@@ -32,6 +34,7 @@ int getOccurenceNumber(string word, vector<string> Word_Vector){
     return count;
 }
 
+// Following function will lower the string
 string toLower(string word){
     for(long unsigned int i = 0; i < word.size(); i++){
         word[i] = tolower(word[i]);
@@ -60,15 +63,13 @@ int main(){
 
         cin.ignore();
 
-        // Lets read the file
         string line;
         vector<string> word_Vector;
+
+        // Lets read the file line by line
         while(getline(file, line)){
-            // for each word in line, we will add to tree if unique
-            // split line by space
             string word_Single = "";
             for(long unsigned int x = 0; x < line.size()+1; x++){
-                // if there is space, add that substr before as word to vector
                 if(line[x] == ' ' || x == line.size()){
                     // Lets check if word_Single is alphabetic
                     bool isAlphabetic = true;
@@ -78,6 +79,7 @@ int main(){
                         }
                     }
                     if(isAlphabetic){
+                        // If yes, add to the vector
                         word_Vector.push_back(word_Single);
                     }
                     word_Single = "";
@@ -85,6 +87,7 @@ int main(){
                 else{
                     // Lets continue if there is any punctation
                     if(ispunct(line[x])){
+                        // Continue, if yes
                         continue;
                     } else{
                         line[x] = tolower(line[x]);
@@ -96,10 +99,7 @@ int main(){
         }
 
         // Now, we have the vector, lowered, no punctation, and alphabetic
-        // WordItem struct is to check if how many times a word is in a document {{“a.txt”, 1}, {“b.txt”, 4}}
-        // For each word in vector, we will check if it is in the tree
-        // If it is, we will add the document to the vector with its count
-        // Lets create the vector
+        // Lets create the unique word vector from word_Vector
         vector<string> unique_Word_Vector;
         for(long unsigned int m = 0; m < word_Vector.size(); m++){
             // If not unique, we will add the document to the vector
@@ -108,34 +108,27 @@ int main(){
             }
         }
 
-        // But, when we go through second file, we will have to add the new occurence on that word
+        // For each unique word, we will create a wordItem and documentItem
         for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
+            // count is the occurence number of the word in word_Vector
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
             auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
             auto docItem = make_shared<DocumentItem>(fileName, count);
             wordItem->docInfoVec.push_back(*docItem);
             if(myTree.isExists(unique_Word_Vector[y])){
                 // It means we already have word_Item_Vector[y] in the tree
-                // We will add the document to the vector
-                //cout << "HEy there"  << unique_Word_Vector[y] << endl;
-                //myTree.change(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
-                
+                // We will add the document to the vector 
                 myTree.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
-                
-                //myTree.find(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
             } else {
-                // We will add the word to the tree
+                // We will add the word to the tree as new
                 myTree.insert(unique_Word_Vector[y], wordItem);
             }
         }
-   }
+    }
     
-    myTree.printTree();
-
     while(true){
         cout << endl<<"Enter queried words in one line: ";
         vector<string> queryWords;
-        // Lets assign getline into query
         getline(cin, query);
         while(query.size() != 0){
             string word = "";
@@ -148,78 +141,80 @@ int main(){
             }
             // Delete the word from query
             query.erase(0, word.size()+1);
+            // Add the word
             queryWords.push_back(word);
         }
 
         vector<shared_ptr<WordItem>> tempWordItemVec;
         
         if(queryWords[0] == "ENDOFINPUT" || queryWords[0] == "endofinput"){
-            // We do not need to delete the tree since our deconstructor will do it
-            // It will call makeEmpty function
+            // We do not need to delete tree since our deconstructor will do it
             break;
-        } else if (queryWords[0] == "REMOVE" || queryWords[0] == "remove"){
+        } else if (toLower(queryWords[0]) == "remove" && !myTree.isEmpty()){
             if(myTree.isExists(queryWords[1])){
                 myTree.remove(toLower(queryWords[1])); 
             } else{
-                cout << "Word to be removed is not found." << endl;
+                cout << "Word to be removed is not found or tree is empty." << endl;
             }
-
         } else{
-
+            // We need to check if all query is in tree
             bool isQueryFullExistAtAll = true;
-            // Lets create wordItem list
-
             for (long unsigned int q = 0; q < queryWords.size(); q++){
                 string word = toLower(queryWords[q]);
                 // We will search the word in the tree
                 if(myTree.isExists(word)){
-
-                    // We will print the document information
+                    // Get the wordItem of that word
                     auto wordItem = myTree.elementAt(word);
-
-                    //cout << "Word: " << wordItem->word << " ------- ";
-                    //cout << "Document Information: ";
+                    /*
+                        In here, I try different approach to get the document names
+                        I put document names into wordItem, and word appeareance into DocumentItem
+                        Then, I put the wordItem into tempWordItemVec
+                        a.txt {                          b.txt {      
+                            sabanci 2                     sabanci 1 
+                            cs 2                          cs 4
+                        }                                }
+                    */
                     for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
-                        bool isExistFile = false;
+                        bool isExistFile = false; // If file is already on tempWordItemVec
                         int indexOfExistFile = -1;
                         for(long unsigned int j = 0; j < tempWordItemVec.size(); j++){
                             if(tempWordItemVec[j]->word == wordItem->docInfoVec[u].documentName){
                                 isExistFile = true;
-                                indexOfExistFile = j;
+                                indexOfExistFile = j; // get index to push back
                                 break;
                             }
                         }
                         if(!isExistFile){
+                            // Meaning we do not have the file in tempWordItemVec
                             auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
                             auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
                             wordItemTemp->docInfoVec.push_back(*docItemTemp);
                             tempWordItemVec.push_back(wordItemTemp);
                         } else{
+                            // Meaning we have the file in tempWordItemVec
                             auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
                             tempWordItemVec[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                         }
-                
                     }
                 } else{
-                    // cout << "Word: "<< word <<" not found" << endl;
                     isQueryFullExistAtAll = false;
                 }
             }
 
             if(!isQueryFullExistAtAll){
+                // Query word is not in the tree at all, but same doc check is later. 
+                // This is to decrease running time
                 cout << "No document contains the given query" << endl;
             } else {
-
                 int isQueryFullExistSameDoc = 0;
-                // if all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
+                // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
                 // we will print the document name
                 for(long unsigned int u = 0; u < tempWordItemVec.size(); u++){
-
                     int queryCount = queryWords.size();
                     for(long unsigned int j = 0; j < tempWordItemVec[u]->docInfoVec.size(); j++){
                         for(long unsigned int e = 0; e < queryWords.size(); e++){
                             if(toLower(queryWords[e]) == tempWordItemVec[u]->docInfoVec[j].documentName){
-                                queryCount--;
+                                queryCount--; // We need to find every query word in document
                             }
                         }
                     }
@@ -227,7 +222,7 @@ int main(){
                     if(queryCount != 0){
                         continue;
                     } else {
-                        isQueryFullExistSameDoc++;
+                        isQueryFullExistSameDoc++; // Saying we found the document
                         cout << "in Document " << tempWordItemVec[u]->word << ", ";
                         for(long unsigned int z= 0; z < tempWordItemVec[u]->docInfoVec.size(); z++){
                             cout << tempWordItemVec[u]->docInfoVec[z].documentName << " found ";
@@ -242,7 +237,7 @@ int main(){
                     }
 
                 }
-
+                // Not all Query is found in the same document
                 if(isQueryFullExistSameDoc == 0){
                     cout << "No document contains the given query" << endl;
                 }
@@ -250,7 +245,5 @@ int main(){
         }
         tempWordItemVec.clear();
     }
-
     return 0;
-
 }
