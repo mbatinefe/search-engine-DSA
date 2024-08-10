@@ -407,8 +407,8 @@ void HashTable<Key, Value>::insert(const Key &x, const Value &y)
         return;
     }
     array[currentPos] = HashEntry(x, y, ACTIVE);
-    if(++currentSize > array.size() / 2){
-        rehash();
+    if(++currentSize > array.size() *2/3){
+        this->rehash();
     }
 }
 
@@ -417,6 +417,8 @@ void HashTable<Key, Value>::rehash()
 {
     vector<HashEntry> oldArray = array;
     
+    cout << "rehashed..." << endl;
+
     // Create new double-sized, empty table
     array.resize(nextPrime(2 * oldArray.size()));
     for(int j = 0; j < array.size(); j++){
@@ -430,6 +432,8 @@ void HashTable<Key, Value>::rehash()
             insert(oldArray[i].key, oldArray[i].value);
         }
     }
+    double loadFactor = double(currentSize) / double(array.size());
+	cout << "previous table size : " << oldArray.size() << ", new table size : " << array.size() << ", current unique word count " << currentSize << ", current load factor: " << loadFactor << endl;
 }
 
 template <class Key, class Value>
