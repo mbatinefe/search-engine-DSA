@@ -1,5 +1,5 @@
 // Mustafa Batin EFE - 29272
-// CS300 - Data Structures - Homework 2
+// CS300 - Data Structures - Homework 3
 
 #include <vector>
 #include <algorithm>
