@@ -1,8 +1,8 @@
 // Mustafa Batin EFE - 29272
 // CS300 - Data Structures - Homework 3
 
-#ifndef _AVL_H
-#define _AVL_H
+#ifndef _AVL_HASH_H
+#define _AVL_HASH_H
 
 #include <iostream>
 #include <vector>
@@ -25,6 +25,9 @@ struct WordItem {
 
 };
 
+/*
+--------------------- AVL Search Tree ---------------------
+*/
 template <class Key, class Value >
 class AvlSearchTree
 {
@@ -77,6 +80,54 @@ class AvlSearchTree
         void doubleWithRightChild(AVLNode * & k1) const;
         void balance(AVLNode * & t) const;
 };
+
+/*
+--------------------- Hash Table ---------------------
+*/
+
+template <class Key, class Value>
+class HashTable
+{
+    public:
+        HashTable(int size = 53);
+        ~HashTable();
+
+        HashTable(const HashTable & rhs): array(rhs.array), currentSize(rhs.currentSize) {}
+        const Value & find(const Key & x) const;
+
+        void makeEmpty();
+        void insert(const Key & x, const Value & y);
+        void remove(const Key & x);
+        
+        const Value & elementAt(const Key & x) const;
+        bool isExists(const Key & x) const;
+
+
+        const HashTable & operator=(const HashTable & rhs);
+
+        enum EntryType { ACTIVE, EMPTY, DELETED };
+
+    private:
+        struct HashEntry{
+            Key key;
+            Value value;
+            EntryType info;
+
+            HashEntry(const Key & k = Key(), const Value & v = Value(), EntryType i = EMPTY)
+                    : key(k), value(v), info(i) {}
+        };
+
+        vector<HashEntry> array;
+        int currentSize;
+
+        bool isExists(const Key & x, HashTable *h) const;
+        bool isActive(int currentPos) const;
+        int findPos(const Key & x) const;
+        void rehash();     
+
+};
+
+
 
 #endif
 

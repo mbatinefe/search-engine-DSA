@@ -8,8 +8,9 @@
 #include <sstream>
 #include <memory>
 #include <vector>
+#include <chrono>
 
-#include "avl.cpp"
+#include "avl_hash.cpp"
 
 using namespace std;
 
@@ -71,9 +72,11 @@ vector<string> getCorrectWordVector(vector<string> wordVector){
 
 }
 
+
+
 int main(){
     AvlSearchTree< string, shared_ptr<WordItem> > myTree;
-
+    HashTable<string, shared_ptr<WordItem>> myHash;
     cout << "Enter number of input files: ";
     int fileCount;
     cin >> fileCount;
@@ -121,22 +124,57 @@ int main(){
             }
         }
 
-        // For each unique word, we will create a wordItem and documentItem
-        for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
-            // count is the occurence number of the word in word_Vector
-            int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
-            auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
-            auto docItem = make_shared<DocumentItem>(fileName, count);
-            wordItem->docInfoVec.push_back(*docItem);
-            if(myTree.isExists(unique_Word_Vector[y])){
-                // It means we already have word_Item_Vector[y] in the tree
-                // We will add the document to the vector 
-                myTree.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
-            } else {
-                // We will add the word to the tree as new
-                myTree.insert(unique_Word_Vector[y], wordItem);
+        int repeat = 20;
+        auto start = chrono::high_resolution_clock::now();
+
+        for(int r = 0; r < repeat; r++){
+            // For each unique word, we will create a wordItem and documentItem
+            for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
+                // count is the occurence number of the word in word_Vector
+                int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
+                auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
+                auto docItem = make_shared<DocumentItem>(fileName, count);
+                wordItem->docInfoVec.push_back(*docItem);
+                if(myTree.isExists(unique_Word_Vector[y])){
+                    // It means we already have word_Item_Vector[y] in the tree
+                    // We will add the document to the vector 
+                    myTree.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+                } else {
+                    // We will add the word to the tree as new
+                    myTree.insert(unique_Word_Vector[y], wordItem);
+                }
             }
         }
+
+        auto BSTTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now() - start);
+        cout << "\nTime: " << BSTTime.count() / repeat << "\n";
+
+        start = chrono::high_resolution_clock::now();
+        for(int r = 0; r < repeat; r++){
+            // For each unique word, we will create a wordItem and documentItem
+            for(long unsigned int y = 0; y < unique_Word_Vector.size(); y++){
+                // count is the occurence number of the word in word_Vector
+                int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
+                auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
+                auto docItem = make_shared<DocumentItem>(fileName, count);
+                wordItem->docInfoVec.push_back(*docItem);
+                
+                if(myHash.isExists(unique_Word_Vector[y])){
+                    // It means we already have word_Item_Vector[y] in the tree
+                    // We will add the document to the vector 
+                    myHash.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+                } else {
+                    // We will add the word to the tree as new
+                    myHash.insert(unique_Word_Vector[y], wordItem);
+                }
+            }
+                
+        }
+        auto HTTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now() - start);
+        cout << "\nTime: " << HTTime.count() / repeat << "\n";
+       
+
+
     }
     
     while(true){
