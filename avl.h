@@ -35,12 +35,7 @@ class AvlSearchTree
 
         const Value & elementAt(const Key & x) const;
         const Key & findMin() const;
-        const Key & findMax() const;
-        //const Value & find(const Key & x) const;
-
         bool isExists(const Key & x) const;
-
-        void printTree() const;
 
         bool isEmpty() const;
         void makeEmpty();
@@ -63,20 +58,15 @@ class AvlSearchTree
 
         AVLNode *root;
 
-        // To change the value of a node, we find and return the node
         const Value & elementAt(const Key & x, AVLNode * t) const;
 
         void insert(const Key & x, const Value & y, AVLNode * & t ) const;
         void remove(const Key & x, AVLNode * & t ) const;
 
         AVLNode * findMin(AVLNode *t) const;
-        AVLNode * findMax(AVLNode *t) const;
-        //AVLNode<Key, Value> *find(const Key & x, const Value & y, AVLNode *t) const; 
-
         bool isExists(const Key & x, AVLNode *t) const;
 
         void makeEmpty(AVLNode* & t) const;
-        void printTree(AVLNode *t) const;
         AVLNode * clone(AVLNode *t) const;
 
         // Manipulations

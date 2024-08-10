@@ -13,58 +13,48 @@ using namespace std;
     Public Functions
 */
 
+// Constructor
 template <class Key, class Value>
 AvlSearchTree<Key, Value>::AvlSearchTree(){
     root = nullptr;
 }
 
+// Copy constructor
 template <class Key, class Value>
 AvlSearchTree<Key, Value>::AvlSearchTree(const AvlSearchTree &rhs)
 {
     root = clone(rhs.root);
 }
 
+// Destructor
 template <class Key, class Value>
 AvlSearchTree<Key, Value>::~AvlSearchTree()
 {
     makeEmpty();
 }
 
+// Helper function for findMin -- public to call private
 template <class Key, class Value>
 const Key & AvlSearchTree<Key, Value>::findMin() const
 {
     return findMin(root)->key;
 }
 
-template <class Key, class Value>
-const Key & AvlSearchTree<Key, Value>::findMax() const
-{
-    return findMax(root)->key;
-}
-
+// Helper function for elementAt -- public to call private
 template <class Key, class Value>
 const Value & AvlSearchTree<Key, Value>::elementAt(const Key &x) const
 {
     return elementAt(x, root);
 }
 
-// Lets write function checking a word is in tree or not
+// Helper function for isExists -- public to call private
 template <class Key, class Value>
 bool AvlSearchTree<Key, Value>::isExists(const Key &x) const
 {
     return isExists(x, root);
 }
 
-template <class Key, class Value>
-void AvlSearchTree<Key, Value>::printTree() const
-{
-    if(isEmpty()){
-        cout << "Empty tree" << endl;
-    }else{
-        printTree(root);
-    }
-}
-
+// Following function will check if tree is empty
 template <class Key, class Value>
 bool AvlSearchTree<Key, Value>::isEmpty() const
 {
@@ -75,24 +65,28 @@ bool AvlSearchTree<Key, Value>::isEmpty() const
     }
 }
 
+// Helper function for makeEmpty -- public to call private
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::makeEmpty()
 {
     makeEmpty(root);
 }
 
+// Helper function for insert -- public to call private
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y)
 {
     insert(x, y, root);
 }
 
+// Helper function for remove -- public to call private
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::remove(const Key &x)
 {
     remove(x, root);
 }
 
+// Following function will assign the tree to another tree -- operator overloading
 template <class Key, class Value>
 const AvlSearchTree<Key, Value> & AvlSearchTree<Key, Value>::operator=(const AvlSearchTree &rhs)
 {
@@ -107,6 +101,7 @@ const AvlSearchTree<Key, Value> & AvlSearchTree<Key, Value>::operator=(const Avl
     Private Functions
 */
 
+// Following function will return the element for key x
 template <class Key, class Value>
 const Value & AvlSearchTree<Key, Value>::elementAt(const Key & x, AVLNode * t) const
 {
@@ -122,6 +117,7 @@ const Value & AvlSearchTree<Key, Value>::elementAt(const Key & x, AVLNode * t) c
     throw std::runtime_error("Key not found in AVL tree");
 }
 
+// Following function will insert the word to tree
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y, AVLNode * &t) const
 {
@@ -152,6 +148,7 @@ void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y, AVLNode * &
     t->height = max(height(t->left), height(t->right)) + 1;
 }
 
+// Following function will remove the word from tree
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::remove(const Key &x, AVLNode * &t) const
 {   
@@ -173,10 +170,11 @@ void AvlSearchTree<Key, Value>::remove(const Key &x, AVLNode * &t) const
             t = nullptr;
         }
         delete removeNode;
+        balance(t);
     }
-    balance(t);
 }
 
+// Following function will find the minimum value in tree -- basically leftmost node
 template <class Key, class Value>
 typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::findMin(AVLNode *t) const
 {
@@ -189,21 +187,9 @@ typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::findMin
     }
 }
 
-template <class Key, class Value>
-typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::findMax(AVLNode *t) const
-{
-    if(t != nullptr){
-        while(t->right != nullptr){
-            t = t->right;
-        }
-    }
-    return t;
-}
-
-// Lets write function checking a word is in tree or not
+// Following function will check if the word is in tree or not
 template <class Key, class Value>
 bool AvlSearchTree<Key, Value>::isExists(const Key &x, AVLNode *t) const {
-    // Check if x is in the tree
     if(t == nullptr){
         return false;
     } else if(x < t->key){
@@ -215,7 +201,7 @@ bool AvlSearchTree<Key, Value>::isExists(const Key &x, AVLNode *t) const {
     }
 }
 
-
+// Following function will empty the tree
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::makeEmpty(AVLNode * &t) const
 {
@@ -227,26 +213,7 @@ void AvlSearchTree<Key, Value>::makeEmpty(AVLNode * &t) const
     t = nullptr;
 }
 
-template <class Key, class Value>
-void AvlSearchTree<Key, Value>::printTree(AVLNode *t) const
-{
-    // T->value is WordItem
-    // print T->value->word
-    // print T->value->docInfoVec
-    if(t != nullptr){
-        printTree(t->left);
-        cout << "Word: ";
-        cout << t->value->word << " ------- ";
-        cout << "Document Information: ";
-        for(unsigned int i = 0; i < t->value->docInfoVec.size(); i++){
-            cout << t->value->docInfoVec[i].documentName << " ";
-            cout << t->value->docInfoVec[i].count << " ";
-        }
-        cout << endl;
-        printTree(t->right);
-    }
-}
-
+// Following function will clone the tree
 template <class Key, class Value>
 typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::clone(AVLNode *t) const
 {
@@ -257,6 +224,7 @@ typename AvlSearchTree<Key, Value>::AVLNode * AvlSearchTree<Key, Value>::clone(A
     }
 }
 
+// Following function will return the height
 template <class Key, class Value>
 int AvlSearchTree<Key, Value>::height(AVLNode *t) const
 {
@@ -267,6 +235,7 @@ int AvlSearchTree<Key, Value>::height(AVLNode *t) const
     }
 }
 
+// Following function will rotate with left child
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::rotateWithLeftChild(AVLNode * &k2) const
 {
@@ -278,6 +247,7 @@ void AvlSearchTree<Key, Value>::rotateWithLeftChild(AVLNode * &k2) const
     k2 = k1;
 }
 
+// Following function will rotate with right child
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::rotateWithRightChild(AVLNode * &k1) const
 {
@@ -289,6 +259,7 @@ void AvlSearchTree<Key, Value>::rotateWithRightChild(AVLNode * &k1) const
     k1 = k2;
 }
 
+// Following function will double with left child
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::doubleWithLeftChild(AVLNode * &k3) const
 {
@@ -296,6 +267,7 @@ void AvlSearchTree<Key, Value>::doubleWithLeftChild(AVLNode * &k3) const
     rotateWithLeftChild(k3);
 }
 
+// Following function will double with right child
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::doubleWithRightChild(AVLNode * &k1) const
 {
@@ -303,6 +275,7 @@ void AvlSearchTree<Key, Value>::doubleWithRightChild(AVLNode * &k1) const
     rotateWithRightChild(k1);
 }
 
+// Following function will balance the tree
 template <class Key, class Value>
 void AvlSearchTree<Key, Value>::balance(AVLNode * &t) const
 {

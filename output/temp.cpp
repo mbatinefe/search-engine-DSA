@@ -42,35 +42,6 @@ string toLower(string word){
     return word;
 }
 
-// Following function will return the correct word vector, lowered, no punctation, and alphabetic
-vector<string> getCorrectWordVector(vector<string> wordVector){
-    vector<string> tempWordVector;
-    // We will check if the word is alphabetic, or punctation
-    for(long unsigned int i = 0; i < wordVector.size(); i++){
-        string word = wordVector[i];
-        string newWord = "";
-        
-        for(long unsigned int j = 0; j < word.size(); j++){
-            if(isalpha(word[j])){
-                newWord += word[j];
-            }
-        }
-        if(newWord != ""){
-            tempWordVector.push_back(toLower(newWord));
-        }
-    }
-
-    // Now, check if wordVector has empty string
-    for(long unsigned int i = 0; i < tempWordVector.size(); i++){
-        if(tempWordVector[i] == ""){
-            // Erase wordVector[i]
-            tempWordVector.erase(tempWordVector.begin() + i);
-        }
-    }
-    return tempWordVector;
-
-}
-
 int main(){
     AvlSearchTree< string, shared_ptr<WordItem> > myTree;
 
@@ -94,21 +65,41 @@ int main(){
 
         string line;
         vector<string> word_Vector;
+
         // Lets read the file line by line
         while(getline(file, line)){
-            vector<string> word_VectorTemp;
-            istringstream iss(line);
-            string word;
-            while(iss >> word){
-                word_VectorTemp.push_back(word);
+            string word_Single = "";
+            for(long unsigned int x = 0; x < line.size()+1; x++){
+                if(line[x] == ' ' || x == line.size()){
+                    // Lets check if word_Single is alphabetic
+                    bool isAlphabetic = true;
+                    for(long unsigned int j = 0; j < word_Single.size(); j++){
+                        if(!isalpha(word_Single[j])){
+                            isAlphabetic = false;
+                        }
+                    }
+                    if(isAlphabetic){
+                        // If yes, add to the vector
+                        word_Vector.push_back(word_Single);
+                    }
+                    word_Single = "";
+                }
+                else{
+                    // Lets continue if there is any punctation
+                    if(ispunct(line[x])){
+                        // Continue, if yes
+                        continue;
+                    } else{
+                        if(x == 0 && line[x] == ' '){
+                            // If there is a space at the beginning, we will skip it
+                            continue;
+                        }
+                        line[x] = tolower(line[x]);
+                        word_Single += line[x];
+                    }
+                }
             }
 
-            word_VectorTemp = getCorrectWordVector(word_VectorTemp);
-            // Add temp word vector to word vector since we might have more lines in doc
-            for(long unsigned int k = 0; k < word_VectorTemp.size(); k++){
-                word_Vector.push_back(word_VectorTemp[k]);
-            }
-            
         }
 
         // Now, we have the vector, lowered, no punctation, and alphabetic
@@ -144,21 +135,31 @@ int main(){
         vector<string> queryWords;
         getline(cin, query);
 
-        istringstream iss(query);
-        string word;
-        while(iss >> word){
+
+        while(query.size() != 0){
+            string word = "";
+
+            for(long unsigned int k = 0; k < query.size(); k++){
+                if(query[k] == ' '){
+                    break;
+                } else{
+                    word += query[k];
+                }
+            }
+            // Delete the word from query
+            query.erase(0, word.size()+1);
+            // Add the word
             queryWords.push_back(word);
         }
 
         vector<shared_ptr<WordItem>> tempWordItemVec;
         
-        if(toLower(queryWords[0]) == "endofinput"){
+        if(queryWords[0] == "ENDOFINPUT" || queryWords[0] == "endofinput"){
             // We do not need to delete tree since our deconstructor will do it
             break;
         } else if (toLower(queryWords[0]) == "remove" && !myTree.isEmpty()){
-            if(myTree.isExists(toLower(queryWords[1]))){
+            if(myTree.isExists(queryWords[1])){
                 myTree.remove(toLower(queryWords[1])); 
-                cout << queryWords[1] << " has been REMOVED" << endl;
             } else{
                 cout << "Word to be removed is not found or tree is empty." << endl;
             }
