@@ -247,7 +247,7 @@ int main(){
     
         start = chrono::high_resolution_clock::now();
         for(int r = 0; r < repeatCount; r++){
-            // Clecn temp word item vector, since we will just repeat the process
+            // Clean temp word item vector, since we will just repeat the process
             tempWordItemVecHash.clear();
             for (long unsigned int q = 0; q < queryWords.size(); q++){
                 string word = toLower(queryWords[q]);
@@ -283,85 +283,80 @@ int main(){
             }
 
         }
+
         auto HashTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
 
-        if(!isQueryFullExistAtAllAVL && !isQueryFullExistAtAllHash){
-            // Query word is not in the tree at all, but same doc check is later. 
-            // This is to decrease running time
-            cout << "No document contains the given query" << endl;
-            cout << "No document contains the given query" << endl;
-        } else {
-            int isQueryFullExistSameDocAVL = 0;
-            int isQueryFullExistSameDocHash = 0;
-            // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
-            // we will print the document name
-            for(long unsigned int u = 0; u < tempWordItemVecAVL.size(); u++){
-                int queryCount = queryWords.size();
-                for(long unsigned int j = 0; j < tempWordItemVecAVL[u]->docInfoVec.size(); j++){
-                    for(long unsigned int e = 0; e < queryWords.size(); e++){
-                        if(toLower(queryWords[e]) == tempWordItemVecAVL[u]->docInfoVec[j].documentName){
-                            queryCount--; // We need to find every query word in document
-                        }
+        int isQueryFullExistSameDocAVL = 0;
+        int isQueryFullExistSameDocHash = 0;
+        // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
+        // we will print the document name
+        for(long unsigned int u = 0; u < tempWordItemVecAVL.size(); u++){
+            int queryCount = queryWords.size();
+            for(long unsigned int j = 0; j < tempWordItemVecAVL[u]->docInfoVec.size(); j++){
+                for(long unsigned int e = 0; e < queryWords.size(); e++){
+                    if(toLower(queryWords[e]) == tempWordItemVecAVL[u]->docInfoVec[j].documentName){
+                        queryCount--; // We need to find every query word in document
                     }
                 }
-
-                if(queryCount != 0){
-                    continue;
-                } else {
-                    isQueryFullExistSameDocAVL++; // Saying we found the document
-                    cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
-                    for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
-                        cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
-                        cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
-                        if(z+1 == tempWordItemVecAVL[u]->docInfoVec.size()){
-                            cout << ".";
-                        } else{
-                            cout << ", ";
-                        }
-                    }
-                    cout << endl;
-                }
-
-            }
-            // Not all Query is found in the same document
-            if(isQueryFullExistSameDocAVL == 0){
-                cout << "No document contains the given query" << endl;
             }
 
-            for(long unsigned int u = 0; u < tempWordItemVecHash.size(); u++){
-                int queryCount = queryWords.size();
-                for(long unsigned int j = 0; j < tempWordItemVecHash[u]->docInfoVec.size(); j++){
-                    for(long unsigned int e = 0; e < queryWords.size(); e++){
-                        if(toLower(queryWords[e]) == tempWordItemVecHash[u]->docInfoVec[j].documentName){
-                            queryCount--; // We need to find every query word in document
-                        }
+            if(queryCount != 0){
+                continue;
+            } else {
+                isQueryFullExistSameDocAVL++; // Saying we found the document
+                cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
+                for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
+                    cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
+                    cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
+                    if(z+1 == tempWordItemVecAVL[u]->docInfoVec.size()){
+                        cout << ".";
+                    } else{
+                        cout << ", ";
                     }
                 }
-
-                if(queryCount != 0){
-                    continue;
-                } else {
-                    isQueryFullExistSameDocHash++; // Saying we found the document
-                    cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
-                    for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
-                        cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
-                        cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";
-                        if(z+1 == tempWordItemVecHash[u]->docInfoVec.size()){
-                            cout << ".";
-                        } else{
-                            cout << ", ";
-                        }
-                    }
-                    cout << endl;
-                }
-
+                cout << endl;
             }
-        
-            // Not all Query is found in the same document
-            if(isQueryFullExistSameDocHash == 0){
-                cout << "No document contains the given query" << endl;
-            }
+
         }
+        // Not all Query is found in the same document
+        if(isQueryFullExistSameDocAVL == 0){
+            cout << "No document contains the given query" << endl;
+        }
+
+        for(long unsigned int u = 0; u < tempWordItemVecHash.size(); u++){
+            int queryCount = queryWords.size();
+            for(long unsigned int j = 0; j < tempWordItemVecHash[u]->docInfoVec.size(); j++){
+                for(long unsigned int e = 0; e < queryWords.size(); e++){
+                    if(toLower(queryWords[e]) == tempWordItemVecHash[u]->docInfoVec[j].documentName){
+                        queryCount--; // We need to find every query word in document
+                    }
+                }
+            }
+
+            if(queryCount != 0){
+                continue;
+            } else {
+                isQueryFullExistSameDocHash++; // Saying we found the document
+                cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
+                for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
+                    cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
+                    cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";
+                    if(z+1 == tempWordItemVecHash[u]->docInfoVec.size()){
+                        cout << ".";
+                    } else{
+                        cout << ", ";
+                    }
+                }
+                cout << endl;
+            }
+
+        }
+    
+        // Not all Query is found in the same document
+        if(isQueryFullExistSameDocHash == 0){
+            cout << "No document contains the given query" << endl;
+        }
+        
         cout << endl << "BST Time: " << BSTTime.count() << " nanoseconds" << endl;
         cout << "Hash Time: " << HashTime.count() << " nanoseconds" << endl;
         cout << "Speed Up: " << (double)BSTTime.count() / (double)HashTime.count() << endl;
