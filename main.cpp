@@ -55,6 +55,11 @@ vector<string> getCorrectWordVector(vector<string> wordVector){
             if(isalpha(word[j])){
                 newWord += word[j];
             }
+            if(newWord != "" && !isalpha(word[j])){
+                tempWordVector.push_back(toLower(newWord));
+                newWord = "";
+            }
+                
         }
         if(newWord != ""){
             tempWordVector.push_back(toLower(newWord));
