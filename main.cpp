@@ -167,7 +167,10 @@ int main(){
         }
         file.close();
     }
-    
+    cout << "\n\n";
+    cout << "After preprocessing, the unique word count is " << myHash.getHashCurSize() <<
+    ". Current load ratio is " << (double(myHash.getHashCurSize()) / double(myHash.getHashSize()));
+
     string query;
     cout << endl<<"Enter queried words in one line: ";
     vector<string> queryWords;
@@ -286,6 +289,7 @@ int main(){
             // Query word is not in the tree at all, but same doc check is later. 
             // This is to decrease running time
             cout << "No document contains the given query" << endl;
+            cout << "No document contains the given query" << endl;
         } else {
             int isQueryFullExistSameDocAVL = 0;
             int isQueryFullExistSameDocHash = 0;
@@ -305,7 +309,7 @@ int main(){
                     continue;
                 } else {
                     isQueryFullExistSameDocAVL++; // Saying we found the document
-                    cout << "AVL: in Document " << tempWordItemVecAVL[u]->word << ", ";
+                    cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
                     for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
                         cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
                         cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
@@ -338,7 +342,7 @@ int main(){
                     continue;
                 } else {
                     isQueryFullExistSameDocHash++; // Saying we found the document
-                    cout << "HASH: in Document " << tempWordItemVecHash[u]->word << ", ";
+                    cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
                     for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
                         cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
                         cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";

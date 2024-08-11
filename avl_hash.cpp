@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include <stdexcept>
 #include "avl_hash.h"
 
@@ -367,9 +368,7 @@ int HashTable<Key, Value>::findPos(const Key &x) const
     while(array[currentPos].info != EMPTY && array[currentPos].key != x)
     {
         currentPos += pow(++collisionNum, 2) ; //add the difference
-        if(currentPos >= array.size()){ // perform the mod
-            currentPos -= array.size();
-        }
+        currentPos %= array.size();
     }
     return currentPos;
 }

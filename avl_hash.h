@@ -102,10 +102,17 @@ class HashTable
         const Value & elementAt(const Key & x) const;
         bool isExists(const Key & x) const;
 
-
         const HashTable & operator=(const HashTable & rhs);
 
         enum EntryType { ACTIVE, EMPTY, DELETED };
+
+        int getHashSize() const {
+            return array.size();
+        }
+
+        int getHashCurSize() const {
+            return currentSize;
+        }
 
     private:
         struct HashEntry{
