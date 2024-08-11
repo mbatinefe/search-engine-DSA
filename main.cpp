@@ -86,24 +86,29 @@ int main(){
     int fileCount;
     cin >> fileCount;
 
-    string query;
+    // Lets store the file names to string vector
+    vector<string> fileNames;
     for(int i = 0; i < fileCount; i++){
         cout << "Enter " << i+1 << ". file name: ";
         string fileName;
         cin >> fileName;
+        fileNames.push_back(fileName);
+    }
 
-        ifstream file(fileName);
+    for(int i = 0; i < fileCount; i++){
+        string fileNameX = fileNames[i];
+        ifstream file(fileNameX);
         if(!file.is_open()){
             cout << "File ERROR" << endl;
             return 1;
         }
 
-        cin.ignore();
-
         string line;
         vector<string> word_Vector;
+
         // Lets read the file line by line
         while(getline(file, line)){
+            cout << "File: " << fileNameX << " - Line: " << line << endl;
             vector<string> word_VectorTemp;
             istringstream iss(line);
             string word;
@@ -134,7 +139,7 @@ int main(){
             // count is the occurence number of the word in word_Vector
             int count = getOccurenceNumber(unique_Word_Vector[y], word_Vector);
             auto wordItem = make_shared<WordItem>(unique_Word_Vector[y]);
-            auto docItem = make_shared<DocumentItem>(fileName, count);
+            auto docItem = make_shared<DocumentItem>(fileNameX, count);
             wordItem->docInfoVec.push_back(*docItem);
             if(myTree.isExists(unique_Word_Vector[y])){
                 // It means we already have word_Item_Vector[y] in the tree
@@ -147,21 +152,23 @@ int main(){
 
             // Adding to Hash Table
             if(myHash.isExists(unique_Word_Vector[y])){
-                // It means we already have word_Item_Vector[y] in the tree
+                // It means we already have word_Item_Vector[y] in the hash
                 // We will add the document to the vector 
                 myHash.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
             } else {
-                // We will add the word to the tree as new
+                // We will add the word to the hash as new
                 myHash.insert(unique_Word_Vector[y], wordItem);
             }
         }
+        file.close();
     }
     
-    
+    string query;
     cout << endl<<"Enter queried words in one line: ";
     vector<string> queryWords;
-    getline(cin, query);
+    cin.ignore(); // To ignore the newline character
 
+    getline(cin, query);
     istringstream iss(query);
     string word;
     while(iss >> word){
@@ -293,7 +300,7 @@ int main(){
                     continue;
                 } else {
                     isQueryFullExistSameDocAVL++; // Saying we found the document
-                    cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
+                    cout << "AVL: in Document " << tempWordItemVecAVL[u]->word << ", ";
                     for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
                         cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
                         cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
@@ -326,7 +333,7 @@ int main(){
                     continue;
                 } else {
                     isQueryFullExistSameDocHash++; // Saying we found the document
-                    cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
+                    cout << "HASH: in Document " << tempWordItemVecHash[u]->word << ", ";
                     for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
                         cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
                         cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";
