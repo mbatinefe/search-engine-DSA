@@ -108,7 +108,6 @@ int main(){
 
         // Lets read the file line by line
         while(getline(file, line)){
-            cout << "File: " << fileNameX << " - Line: " << line << endl;
             vector<string> word_VectorTemp;
             istringstream iss(line);
             string word;
@@ -149,15 +148,21 @@ int main(){
                 // We will add the word to the tree as new
                 myTree.insert(unique_Word_Vector[y], wordItem);
             }
+        }
 
-            // Adding to Hash Table
-            if(myHash.isExists(unique_Word_Vector[y])){
-                // It means we already have word_Item_Vector[y] in the hash
+        for(long unsigned int m = 0; m < unique_Word_Vector.size(); m++){
+            // count is the occurence number of the word in word_Vector
+            int count = getOccurenceNumber(unique_Word_Vector[m], word_Vector);
+            auto wordItem = make_shared<WordItem>(unique_Word_Vector[m]);
+            auto docItem = make_shared<DocumentItem>(fileNameX, count);
+            wordItem->docInfoVec.push_back(*docItem);
+            if(myHash.isExists(unique_Word_Vector[m])){
+                // It means we already have word_Item_Vector[y] in the tree
                 // We will add the document to the vector 
-                myHash.elementAt(unique_Word_Vector[y])->docInfoVec.push_back(*docItem);
+                myHash.elementAt(unique_Word_Vector[m])->docInfoVec.push_back(*docItem);
             } else {
-                // We will add the word to the hash as new
-                myHash.insert(unique_Word_Vector[y], wordItem);
+                // We will add the word to the tree as new
+                myHash.insert(unique_Word_Vector[m], wordItem);
             }
         }
         file.close();
