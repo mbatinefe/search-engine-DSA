@@ -83,13 +83,6 @@ void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y)
     insert(x, y, root);
 }
 
-// Helper function for remove -- public to call private
-template <class Key, class Value>
-void AvlSearchTree<Key, Value>::remove(const Key &x)
-{
-    remove(x, root);
-}
-
 // Following function will assign the tree to another tree -- operator overloading
 template <class Key, class Value>
 const AvlSearchTree<Key, Value> & AvlSearchTree<Key, Value>::operator=(const AvlSearchTree &rhs)
@@ -150,32 +143,6 @@ void AvlSearchTree<Key, Value>::insert(const Key &x, const Value &y, AVLNode * &
         ;
     }
     t->height = max(height(t->left), height(t->right)) + 1;
-}
-
-// Following function will remove the word from tree
-template <class Key, class Value>
-void AvlSearchTree<Key, Value>::remove(const Key &x, AVLNode * &t) const
-{   
-
-    if(x < t->key){
-        remove(x, t->left);
-    }else if(t->key < x){
-        remove(x, t->right);
-    }else if(t->left != nullptr && t->right != nullptr){
-        t->key = findMin(t->right)->key;
-        remove(t->key, t->right);
-    }else{
-        AVLNode *removeNode = t;
-        if (t->left != nullptr){
-            t = t->left;
-        } else if (t->right != nullptr){
-            t = t->right;
-        } else{
-            t = nullptr;
-        }
-        delete removeNode;
-        balance(t);
-    }
 }
 
 // Following function will find the minimum value in tree -- basically leftmost node
@@ -351,21 +318,11 @@ HashTable<Key, Value>::HashTable(int size)
     makeEmpty();
 }
 
-// Following function will check if the key exists
+// Helper function for isExists -- public to call private
 template <class Key, class Value>
 bool HashTable<Key, Value>::isExists(const Key &x) const
 {
     return isActive(findPos(x));
-}
-
-// Following function will remove given key
-template <class Key, class Value>
-void HashTable<Key, Value>::remove(const Key &x)
-{
-    int currentPos = findPos(x);
-    if(isActive(currentPos)){
-        array[currentPos].info = DELETED;
-    }
 }
 
 // Following function will return the value of key

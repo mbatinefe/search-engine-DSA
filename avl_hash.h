@@ -43,8 +43,7 @@ class AvlSearchTree
         bool isEmpty() const;
         void makeEmpty();
         void insert(const Key & x, const Value & y);
-        void remove(const Key & x);
-        
+
         const AvlSearchTree & operator=(const AvlSearchTree &rhs);
     
     private:
@@ -64,7 +63,6 @@ class AvlSearchTree
         const Value & elementAt(const Key & x, AVLNode * t) const;
 
         void insert(const Key & x, const Value & y, AVLNode * & t ) const;
-        void remove(const Key & x, AVLNode * & t ) const;
 
         AVLNode * findMin(AVLNode *t) const;
         bool isExists(const Key & x, AVLNode *t) const;
@@ -97,8 +95,7 @@ class HashTable
 
         void makeEmpty();
         void insert(const Key & x, const Value & y);
-        void remove(const Key & x);
-        
+
         const Value & elementAt(const Key & x) const;
         bool isExists(const Key & x) const;
 
@@ -133,8 +130,6 @@ class HashTable
         void rehash();     
 
 };
-
-
 
 #endif
 
