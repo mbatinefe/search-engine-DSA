@@ -188,180 +188,177 @@ int main(){
     vector<shared_ptr<WordItem>> tempWordItemVecAVL;
     vector<shared_ptr<WordItem>> tempWordItemVecHash;
     
-    if(toLower(queryWords[0]) == "endofinput"){
-        // We do not need to delete tree since our deconstructor will do it
-        return 0;
-    } else{
-        // We need to check if all query is in tree
-        bool isQueryFullExistAtAllAVL = true;
-        bool isQueryFullExistAtAllHash = true;
 
-        int repeatCount = 20;
-        auto start = chrono::high_resolution_clock::now();
-        for (int r = 0; r < repeatCount; r++){
-            // Clecn temp word item vector, since we will just repeat the process
-            tempWordItemVecAVL.clear();
-            for (long unsigned int q = 0; q < queryWords.size(); q++){
-                string word = toLower(queryWords[q]);
-                // We will search the word in the tree
-                if(myTree.isExists(word)){
-                    // Get the wordItem of that word
-                    auto wordItem = myTree.elementAt(word);
-                    /*
-                        In here, I try different approach to get the document names
-                        I put document names into wordItem, and word appeareance into DocumentItem
-                        Then, I put the wordItem into tempWordItemVec
-                        a.txt {                          b.txt {      
-                            sabanci 2                     sabanci 1 
-                            cs 2                          cs 4
-                        }                                }
-                    */
-                    for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
-                        bool isExistFile = false; // If file is already on tempWordItemVec
-                        int indexOfExistFile = -1;
-                        for(long unsigned int j = 0; j < tempWordItemVecAVL.size(); j++){
-                            if(tempWordItemVecAVL[j]->word == wordItem->docInfoVec[u].documentName){
-                                isExistFile = true;
-                                indexOfExistFile = j; // get index to push back
-                                break;
-                            }
-                        }
-                        if(!isExistFile){
-                            // Meaning we do not have the file in tempWordItemVec
-                            auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
-                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
-                            wordItemTemp->docInfoVec.push_back(*docItemTemp);
-                            tempWordItemVecAVL.push_back(wordItemTemp);
-                        } else{
-                            // Meaning we have the file in tempWordItemVec
-                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
-                            tempWordItemVecAVL[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
+    // We need to check if all query is in tree
+    bool isQueryFullExistAtAllAVL = true;
+    bool isQueryFullExistAtAllHash = true;
+
+    int repeatCount = 20;
+    auto start = chrono::high_resolution_clock::now();
+    for (int r = 0; r < repeatCount; r++){
+        // Clecn temp word item vector, since we will just repeat the process
+        tempWordItemVecAVL.clear();
+        for (long unsigned int q = 0; q < queryWords.size(); q++){
+            string word = toLower(queryWords[q]);
+            // We will search the word in the tree
+            if(myTree.isExists(word)){
+                // Get the wordItem of that word
+                auto wordItem = myTree.elementAt(word);
+                /*
+                    In here, I try different approach to get the document names
+                    I put document names into wordItem, and word appeareance into DocumentItem
+                    Then, I put the wordItem into tempWordItemVec
+                    a.txt {                          b.txt {      
+                        sabanci 2                     sabanci 1 
+                        cs 2                          cs 4
+                    }                                }
+                */
+                for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
+                    bool isExistFile = false; // If file is already on tempWordItemVec
+                    int indexOfExistFile = -1;
+                    for(long unsigned int j = 0; j < tempWordItemVecAVL.size(); j++){
+                        if(tempWordItemVecAVL[j]->word == wordItem->docInfoVec[u].documentName){
+                            isExistFile = true;
+                            indexOfExistFile = j; // get index to push back
+                            break;
                         }
                     }
-                } else{
-                    isQueryFullExistAtAllAVL = false;
-                }
-            }
-        }
-        auto BSTTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
-    
-        start = chrono::high_resolution_clock::now();
-        for(int r = 0; r < repeatCount; r++){
-            // Clean temp word item vector, since we will just repeat the process
-            tempWordItemVecHash.clear();
-            for (long unsigned int q = 0; q < queryWords.size(); q++){
-                string word = toLower(queryWords[q]);
-                // We will search the word in the tree
-                if(myHash.isExists(word)){
-                    // Get the wordItem of that word
-                    auto wordItem = myHash.elementAt(word);
-                    for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
-                        bool isExistFile = false; // If file is already on tempWordItemVec
-                        int indexOfExistFile = -1;
-                        for(long unsigned int j = 0; j < tempWordItemVecHash.size(); j++){
-                            if(tempWordItemVecHash[j]->word == wordItem->docInfoVec[u].documentName){
-                                isExistFile = true;
-                                indexOfExistFile = j; // get index to push back
-                                break;
-                            }
-                        }
-                        if(!isExistFile){
-                            // Meaning we do not have the file in tempWordItemVec
-                            auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
-                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
-                            wordItemTemp->docInfoVec.push_back(*docItemTemp);
-                            tempWordItemVecHash.push_back(wordItemTemp);
-                        } else{
-                            // Meaning we have the file in tempWordItemVec
-                            auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
-                            tempWordItemVecHash[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
-                        }
-                    }
-                } else{
-                    isQueryFullExistAtAllHash = false;
-                }
-            }
-
-        }
-
-        auto HashTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
-
-        int isQueryFullExistSameDocAVL = 0;
-        int isQueryFullExistSameDocHash = 0;
-        // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
-        // we will print the document name
-        for(long unsigned int u = 0; u < tempWordItemVecAVL.size(); u++){
-            int queryCount = queryWords.size();
-            for(long unsigned int j = 0; j < tempWordItemVecAVL[u]->docInfoVec.size(); j++){
-                for(long unsigned int e = 0; e < queryWords.size(); e++){
-                    if(toLower(queryWords[e]) == tempWordItemVecAVL[u]->docInfoVec[j].documentName){
-                        queryCount--; // We need to find every query word in document
-                    }
-                }
-            }
-
-            if(queryCount != 0){
-                continue;
-            } else {
-                isQueryFullExistSameDocAVL++; // Saying we found the document
-                cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
-                for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
-                    cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
-                    cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
-                    if(z+1 == tempWordItemVecAVL[u]->docInfoVec.size()){
-                        cout << ".";
+                    if(!isExistFile){
+                        // Meaning we do not have the file in tempWordItemVec
+                        auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
+                        auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
+                        wordItemTemp->docInfoVec.push_back(*docItemTemp);
+                        tempWordItemVecAVL.push_back(wordItemTemp);
                     } else{
-                        cout << ", ";
+                        // Meaning we have the file in tempWordItemVec
+                        auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
+                        tempWordItemVecAVL[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                     }
                 }
-                cout << endl;
+            } else{
+                isQueryFullExistAtAllAVL = false;
             }
-
         }
-        // Not all Query is found in the same document
-        if(isQueryFullExistSameDocAVL == 0){
-            cout << "No document contains the given query" << endl;
-        }
+    }
+    auto BSTTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
 
-        for(long unsigned int u = 0; u < tempWordItemVecHash.size(); u++){
-            int queryCount = queryWords.size();
-            for(long unsigned int j = 0; j < tempWordItemVecHash[u]->docInfoVec.size(); j++){
-                for(long unsigned int e = 0; e < queryWords.size(); e++){
-                    if(toLower(queryWords[e]) == tempWordItemVecHash[u]->docInfoVec[j].documentName){
-                        queryCount--; // We need to find every query word in document
+    start = chrono::high_resolution_clock::now();
+    for(int r = 0; r < repeatCount; r++){
+        // Clean temp word item vector, since we will just repeat the process
+        tempWordItemVecHash.clear();
+        for (long unsigned int q = 0; q < queryWords.size(); q++){
+            string word = toLower(queryWords[q]);
+            // We will search the word in the tree
+            if(myHash.isExists(word)){
+                // Get the wordItem of that word
+                auto wordItem = myHash.elementAt(word);
+                for(long unsigned int u = 0; u < wordItem->docInfoVec.size(); u++){
+                    bool isExistFile = false; // If file is already on tempWordItemVec
+                    int indexOfExistFile = -1;
+                    for(long unsigned int j = 0; j < tempWordItemVecHash.size(); j++){
+                        if(tempWordItemVecHash[j]->word == wordItem->docInfoVec[u].documentName){
+                            isExistFile = true;
+                            indexOfExistFile = j; // get index to push back
+                            break;
+                        }
                     }
-                }
-            }
-
-            if(queryCount != 0){
-                continue;
-            } else {
-                isQueryFullExistSameDocHash++; // Saying we found the document
-                cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
-                for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
-                    cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
-                    cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";
-                    if(z+1 == tempWordItemVecHash[u]->docInfoVec.size()){
-                        cout << ".";
+                    if(!isExistFile){
+                        // Meaning we do not have the file in tempWordItemVec
+                        auto wordItemTemp = make_shared<WordItem>(wordItem->docInfoVec[u].documentName);
+                        auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
+                        wordItemTemp->docInfoVec.push_back(*docItemTemp);
+                        tempWordItemVecHash.push_back(wordItemTemp);
                     } else{
-                        cout << ", ";
+                        // Meaning we have the file in tempWordItemVec
+                        auto docItemTemp = make_shared<DocumentItem>(word, wordItem->docInfoVec[u].count);
+                        tempWordItemVecHash[indexOfExistFile]->docInfoVec.push_back(*docItemTemp);
                     }
                 }
-                cout << endl;
+            } else{
+                isQueryFullExistAtAllHash = false;
             }
-
         }
-    
-        // Not all Query is found in the same document
-        if(isQueryFullExistSameDocHash == 0){
-            cout << "No document contains the given query" << endl;
-        }
-        
-        cout << endl << "BST Time: " << BSTTime.count() << " nanoseconds" << endl;
-        cout << "Hash Time: " << HashTime.count() << " nanoseconds" << endl;
-        cout << "Speed Up: " << (double)BSTTime.count() / (double)HashTime.count() << endl;
 
     }
+
+    auto HashTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
+
+    int isQueryFullExistSameDocAVL = 0;
+    int isQueryFullExistSameDocHash = 0;
+    // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
+    // we will print the document name
+    for(long unsigned int u = 0; u < tempWordItemVecAVL.size(); u++){
+        int queryCount = queryWords.size();
+        for(long unsigned int j = 0; j < tempWordItemVecAVL[u]->docInfoVec.size(); j++){
+            for(long unsigned int e = 0; e < queryWords.size(); e++){
+                if(toLower(queryWords[e]) == tempWordItemVecAVL[u]->docInfoVec[j].documentName){
+                    queryCount--; // We need to find every query word in document
+                }
+            }
+        }
+
+        if(queryCount != 0){
+            continue;
+        } else {
+            isQueryFullExistSameDocAVL++; // Saying we found the document
+            cout << "in Document " << tempWordItemVecAVL[u]->word << ", ";
+            for(long unsigned int z= 0; z < tempWordItemVecAVL[u]->docInfoVec.size(); z++){
+                cout << tempWordItemVecAVL[u]->docInfoVec[z].documentName << " found ";
+                cout << tempWordItemVecAVL[u]->docInfoVec[z].count << " times";
+                if(z+1 == tempWordItemVecAVL[u]->docInfoVec.size()){
+                    cout << ".";
+                } else{
+                    cout << ", ";
+                }
+            }
+            cout << endl;
+        }
+
+    }
+    // Not all Query is found in the same document
+    if(isQueryFullExistSameDocAVL == 0){
+        cout << "No document contains the given query" << endl;
+    }
+
+    for(long unsigned int u = 0; u < tempWordItemVecHash.size(); u++){
+        int queryCount = queryWords.size();
+        for(long unsigned int j = 0; j < tempWordItemVecHash[u]->docInfoVec.size(); j++){
+            for(long unsigned int e = 0; e < queryWords.size(); e++){
+                if(toLower(queryWords[e]) == tempWordItemVecHash[u]->docInfoVec[j].documentName){
+                    queryCount--; // We need to find every query word in document
+                }
+            }
+        }
+
+        if(queryCount != 0){
+            continue;
+        } else {
+            isQueryFullExistSameDocHash++; // Saying we found the document
+            cout << "in Document " << tempWordItemVecHash[u]->word << ", ";
+            for(long unsigned int z= 0; z < tempWordItemVecHash[u]->docInfoVec.size(); z++){
+                cout << tempWordItemVecHash[u]->docInfoVec[z].documentName << " found ";
+                cout << tempWordItemVecHash[u]->docInfoVec[z].count << " times";
+                if(z+1 == tempWordItemVecHash[u]->docInfoVec.size()){
+                    cout << ".";
+                } else{
+                    cout << ", ";
+                }
+            }
+            cout << endl;
+        }
+
+    }
+
+    // Not all Query is found in the same document
+    if(isQueryFullExistSameDocHash == 0){
+        cout << "No document contains the given query" << endl;
+    }
+    
+    cout << endl << "Time: " << BSTTime.count() << endl;
+    cout << "Time: " << HashTime.count() << endl;
+    cout << "Speed Up: " << (double)BSTTime.count() / (double)HashTime.count() << endl;
+
+    
     tempWordItemVecAVL.clear();
     tempWordItemVecHash.clear();
     return 0;
