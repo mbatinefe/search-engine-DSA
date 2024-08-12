@@ -307,6 +307,10 @@ void AvlSearchTree<Key, Value>::balance(AVLNode * &t) const
 --------------------- Hash Table ---------------------
 */
 
+/*
+    Public Functions
+*/
+
 // Following function will check if the int is prime
 bool isPrime( int n )
 {
@@ -335,6 +339,7 @@ int nextPrime( int n )
     return n;
 }
 
+// Constructor
 template <class Key, class Value>
 HashTable<Key, Value>::HashTable(int size)
 {
@@ -346,39 +351,14 @@ HashTable<Key, Value>::HashTable(int size)
     makeEmpty();
 }
 
-int hashArray(const string &x, int tableSize) 
-{
-    int count = 0;
-    for(size_t i = 0; i < x.length(); i++){
-        count = 53 * count + x[i];
-    }
-    count %= tableSize;
-    if(count < 0){
-        count += tableSize;
-    }
-    return count;
-}
-
+// Following function will check if the key exists
 template <class Key, class Value>
-int HashTable<Key, Value>::findPos(const Key &x) const
+bool HashTable<Key, Value>::isExists(const Key &x) const
 {
-    int collisionNum = 0;
-    int currentPos = hashArray(x, array.size());
-
-    while(array[currentPos].info != EMPTY && array[currentPos].key != x)
-    {
-        currentPos += pow(++collisionNum, 2) ;
-        currentPos %= array.size();
-    }
-    return currentPos;
+    return isActive(findPos(x));
 }
 
-template <class Key, class Value>
-bool HashTable<Key, Value>::isActive(int currentPos) const
-{
-    return array[currentPos].info == ACTIVE;
-}
-
+// Following function will remove given key
 template <class Key, class Value>
 void HashTable<Key, Value>::remove(const Key &x)
 {
@@ -388,6 +368,7 @@ void HashTable<Key, Value>::remove(const Key &x)
     }
 }
 
+// Following function will return the value of key
 template <class Key, class Value>
 const Value & HashTable<Key, Value>::find(const Key &x) const
 {
@@ -398,6 +379,7 @@ const Value & HashTable<Key, Value>::find(const Key &x) const
     throw std::runtime_error("ITEM_NOT_FOUND");
 }
 
+// Following function will insert the key and value
 template <class Key, class Value>
 void HashTable<Key, Value>::insert(const Key &x, const Value &y)
 {
@@ -411,6 +393,53 @@ void HashTable<Key, Value>::insert(const Key &x, const Value &y)
     }
 }
 
+// Following function will make the table empty
+template <class Key, class Value>
+void HashTable<Key, Value>::makeEmpty()
+{
+    currentSize = 0;
+    for(int i = 0; i < array.size(); i++){
+        array[i].info = EMPTY;
+    }
+}
+
+// Deconstructor
+template <class Key, class Value>
+HashTable<Key, Value>::~HashTable()
+{
+    makeEmpty();
+}
+
+// Copy constructor -- operator overloading
+template <class Key, class Value>
+const HashTable<Key, Value> & HashTable<Key, Value>::operator=(const HashTable &rhs)
+{
+    if(this != &rhs){
+        array = rhs.array;
+        currentSize = rhs.currentSize;
+    }
+    return *this;
+}
+
+// Following function will return the value of key
+template <class Key, class Value>
+const Value & HashTable<Key, Value>::elementAt(const Key &x) const
+{
+    return find(x);
+}
+
+/*
+    Private Functions
+*/
+
+// Following function will check if the key exists
+template <class Key, class Value>
+bool HashTable<Key, Value>::isExists(const Key &x, HashTable *h) const
+{
+    return h->isActive(h->findPos(x));
+}
+
+// Following function will rehash
 template <class Key, class Value>
 void HashTable<Key, Value>::rehash()
 {
@@ -435,46 +464,38 @@ void HashTable<Key, Value>::rehash()
 	cout << "previous table size : " << oldArray.size() << ", new table size : " << array.size() << ", current unique word count " << currentSize << ", current load factor: " << loadFactor << endl;
 }
 
-template <class Key, class Value>
-void HashTable<Key, Value>::makeEmpty()
+// Following function will return hashed value number
+int hashArray(const string &x, int tableSize) 
 {
-    currentSize = 0;
-    for(int i = 0; i < array.size(); i++){
-        array[i].info = EMPTY;
+    int count = 0;
+    for(size_t i = 0; i < x.length(); i++){
+        count = 53 * count + x[i];
     }
-}
-
-// Deconstructor
-template <class Key, class Value>
-HashTable<Key, Value>::~HashTable()
-{
-    makeEmpty();
-}
-
-template <class Key, class Value>
-const HashTable<Key, Value> & HashTable<Key, Value>::operator=(const HashTable &rhs)
-{
-    if(this != &rhs){
-        array = rhs.array;
-        currentSize = rhs.currentSize;
+    count %= tableSize;
+    if(count < 0){
+        count += tableSize;
     }
-    return *this;
+    return count;
 }
 
+// Following function will return the pos of given key
 template <class Key, class Value>
-const Value & HashTable<Key, Value>::elementAt(const Key &x) const
+int HashTable<Key, Value>::findPos(const Key &x) const
 {
-    return find(x);
+    int collisionNum = 0;
+    int currentPos = hashArray(x, array.size());
+
+    while(array[currentPos].info != EMPTY && array[currentPos].key != x)
+    {
+        currentPos += pow(++collisionNum, 2) ;
+        currentPos %= array.size();
+    }
+    return currentPos;
 }
 
+// Following will check if the pos is active
 template <class Key, class Value>
-bool HashTable<Key, Value>::isExists(const Key &x, HashTable *h) const
+bool HashTable<Key, Value>::isActive(int currentPos) const
 {
-    return h->isActive(h->findPos(x));
-}
-
-template <class Key, class Value>
-bool HashTable<Key, Value>::isExists(const Key &x) const
-{
-    return isActive(findPos(x));
+    return array[currentPos].info == ACTIVE;
 }

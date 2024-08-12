@@ -50,18 +50,20 @@ vector<string> getCorrectWordVector(vector<string> wordVector){
     for(long unsigned int i = 0; i < wordVector.size(); i++){
         string word = wordVector[i];
         string newWord = "";
-        
+        // For each word, well check each char
         for(long unsigned int j = 0; j < word.size(); j++){
             if(isalpha(word[j])){
+                // Add chars to newWord
                 newWord += word[j];
             }
             if(newWord != "" && !isalpha(word[j])){
+                // Add the word, end of it
                 tempWordVector.push_back(toLower(newWord));
                 newWord = "";
             }
-                
         }
         if(newWord != ""){
+            // If not empty, something added but there is seperator
             tempWordVector.push_back(toLower(newWord));
         }
     }
@@ -69,7 +71,7 @@ vector<string> getCorrectWordVector(vector<string> wordVector){
     // Now, check if wordVector has empty string
     for(long unsigned int i = 0; i < tempWordVector.size(); i++){
         if(tempWordVector[i] == ""){
-            // Erase wordVector[i]
+            // Erase from vector if any
             tempWordVector.erase(tempWordVector.begin() + i);
         }
     }
@@ -188,7 +190,6 @@ int main(){
     vector<shared_ptr<WordItem>> tempWordItemVecAVL;
     vector<shared_ptr<WordItem>> tempWordItemVecHash;
     
-
     // We need to check if all query is in tree
     bool isQueryFullExistAtAllAVL = true;
     bool isQueryFullExistAtAllHash = true;
@@ -320,6 +321,8 @@ int main(){
 
         if (r == repeatCount-1){
             int isQueryFullExistSameDocHash = 0;
+            // If all query words are in same tempWordItemVec[i].docInfoVec[j].documentName
+            // we will print the document name
             for(long unsigned int u = 0; u < tempWordItemVecHash.size(); u++){
                 int queryCount = queryWords.size();
                 for(long unsigned int j = 0; j < tempWordItemVecHash[u]->docInfoVec.size(); j++){
@@ -357,12 +360,10 @@ int main(){
     }
     auto HashTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
 
-
     cout << endl << "Time: " << BSTTime.count() / repeatCount << endl;
     cout << "Time: " << HashTime.count() / repeatCount << endl;
     cout << "Speed Up: " << ((double)BSTTime.count() / repeatCount) / ((double)HashTime.count()/repeatCount) << endl;
 
-    
     tempWordItemVecAVL.clear();
     tempWordItemVecHash.clear();
     return 0;
