@@ -406,7 +406,7 @@ void HashTable<Key, Value>::insert(const Key &x, const Value &y)
         return;
     }
     array[currentPos] = HashEntry(x, y, ACTIVE);
-    if(++currentSize > array.size() * 0.95){
+    if(++currentSize > array.size() * 0.89){
         this->rehash();
     }
 }

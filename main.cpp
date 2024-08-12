@@ -358,9 +358,9 @@ int main(){
     auto HashTime = chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now()-start);
 
 
-    cout << endl << "Time: " << BSTTime.count() << endl;
-    cout << "Time: " << HashTime.count() << endl;
-    cout << "Speed Up: " << (double)BSTTime.count() / (double)HashTime.count() << endl;
+    cout << endl << "Time: " << BSTTime.count() / repeatCount << endl;
+    cout << "Time: " << HashTime.count() / repeatCount << endl;
+    cout << "Speed Up: " << ((double)BSTTime.count() / repeatCount) / ((double)HashTime.count()/repeatCount) << endl;
 
     
     tempWordItemVecAVL.clear();
