@@ -367,7 +367,7 @@ int HashTable<Key, Value>::findPos(const Key &x) const
 
     while(array[currentPos].info != EMPTY && array[currentPos].key != x)
     {
-        currentPos += pow(++collisionNum, 2) ; //add the difference
+        currentPos += pow(++collisionNum, 2) ;
         currentPos %= array.size();
     }
     return currentPos;
@@ -406,7 +406,7 @@ void HashTable<Key, Value>::insert(const Key &x, const Value &y)
         return;
     }
     array[currentPos] = HashEntry(x, y, ACTIVE);
-    if(++currentSize > array.size() *2/3){
+    if(++currentSize > array.size() * 0.85){
         this->rehash();
     }
 }
