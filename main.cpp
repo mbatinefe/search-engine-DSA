@@ -1,6 +1,9 @@
 // Mustafa Batin EFE - 29272
 // CS300 - Data Structures - Homework 3
 
+/*
+    AVL Search Tree and Hash Table are implemented in this code.
+*/
 #include <iostream>
 #include <string>
 #include <random>
