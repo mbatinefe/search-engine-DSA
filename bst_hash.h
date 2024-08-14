@@ -1,8 +1,8 @@
 // Mustafa Batin EFE - 29272
 // CS300 - Data Structures - Homework 3
 
-#ifndef _AVL_HASH_H
-#define _AVL_HASH_H
+#ifndef _BST_HASH_H
+#define _BST_HASH_H
 
 #include <iostream>
 #include <vector>
@@ -29,12 +29,12 @@ struct WordItem {
 --------------------- AVL Search Tree ---------------------
 */
 template <class Key, class Value >
-class AvlSearchTree
+class BinarySearchTree
 {
     public:
-        AvlSearchTree();
-        AvlSearchTree(const AvlSearchTree & rhs);
-        ~AvlSearchTree();
+        BinarySearchTree();
+        BinarySearchTree(const BinarySearchTree & rhs);
+        ~BinarySearchTree();
 
         const Value & elementAt(const Key & x) const;
         const Key & findMin() const;
@@ -44,39 +44,32 @@ class AvlSearchTree
         void makeEmpty();
         void insert(const Key & x, const Value & y);
 
-        const AvlSearchTree & operator=(const AvlSearchTree &rhs);
+        const BinarySearchTree & operator=(const BinarySearchTree &rhs);
     
     private:
 
-        struct AVLNode{
+        struct BinaryNode{
             Key key;
             Value value;
-            AVLNode *left;
-            AVLNode *right;
+            BinaryNode *left;
+            BinaryNode *right;
             int height;
-            AVLNode(const Key& theKey, const Value& theValue, AVLNode *lt, AVLNode *rt, int h=0)
+            BinaryNode(const Key& theKey, const Value& theValue, BinaryNode *lt, BinaryNode *rt, int h=0)
                     : key(theKey), value(theValue), left(lt), right(rt), height(h) {}
         };
 
-        AVLNode *root;
+        BinaryNode *root;
 
-        const Value & elementAt(const Key & x, AVLNode * t) const;
+        const Value & elementAt(const Key & x, BinaryNode * t) const;
 
-        void insert(const Key & x, const Value & y, AVLNode * & t ) const;
+        void insert(const Key & x, const Value & y, BinaryNode * & t ) const;
 
-        AVLNode * findMin(AVLNode *t) const;
-        bool isExists(const Key & x, AVLNode *t) const;
+        BinaryNode * findMin(BinaryNode *t) const;
+        bool isExists(const Key & x, BinaryNode *t) const;
 
-        void makeEmpty(AVLNode* & t) const;
-        AVLNode * clone(AVLNode *t) const;
+        void makeEmpty(BinaryNode* & t) const;
+        BinaryNode * clone(BinaryNode *t) const;
 
-        // Manipulations
-        int height(AVLNode *t) const;
-        void rotateWithLeftChild(AVLNode* & k2) const;
-        void rotateWithRightChild(AVLNode * & k1) const;
-        void doubleWithLeftChild(AVLNode * & k3) const;
-        void doubleWithRightChild(AVLNode * & k1) const;
-        void balance(AVLNode * & t) const;
 };
 
 /*
