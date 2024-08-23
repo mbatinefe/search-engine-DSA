@@ -5,9 +5,11 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
 #include "bst_hash.h"
 
 using namespace std;
+
 /*
 --------------------- Binary Search Tree ---------------------
 */
@@ -188,6 +190,34 @@ typename BinarySearchTree<Key, Value>::BinaryNode * BinarySearchTree<Key, Value>
     Public Functions
 */
 
+// Following function will check if the int is prime
+static bool isPrime(int n)
+{
+    if(n==2 || n==3){
+        return true;
+    }
+    if(n==1 || n%2==0){
+        return false;
+    }
+    for(int i=3; i*i<=n; i+=2){
+        if(n%i==0){
+            return false;
+        }
+    }
+    return true;
+}
+
+// Following function will return the next prime number
+static int nextPrime(int n)
+{
+    if(n%2==0){
+        n++;
+    }
+    for(; !isPrime(n); n+=2){
+    }
+    return n;
+}
+
 // Constructor
 template <class Key, class Value>
 HashTable<Key, Value>::HashTable(int size)
@@ -301,6 +331,20 @@ void HashTable<Key, Value>::rehash()
     }
     double loadFactor = double(currentSize) / double(array.size());
 	cout << "previous table size:" << oldArray.size() << ", new table size: " << array.size() << ", current unique word count " << currentSize << ", current load factor: " << loadFactor << endl;
+}
+
+// Following function will return hashed value number
+static int hashArray(const string &x, int tableSize) 
+{
+    int count = 0;
+    for(size_t i = 0; i < x.length(); i++){
+        count = 53 * count + x[i];
+    }
+    count %= tableSize;
+    if(count < 0){
+        count += tableSize;
+    }
+    return count;
 }
 
 // Following function will return the pos of given key
