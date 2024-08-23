@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 
+#include "utils.cpp"
 #include "bst_hash.cpp"
 
 using namespace std;
