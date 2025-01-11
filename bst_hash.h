@@ -1,6 +1,3 @@
-// Mustafa Batin EFE - 29272
-// CS300 - Data Structures - Homework 3
-
 #ifndef _BST_HASH_H
 #define _BST_HASH_H
 
