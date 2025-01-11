@@ -56,16 +56,6 @@ Speed Up: 5.50544
 - Document frequency tracking
 - Performance timing over multiple runs
 
-## Project Structure
-├── src/
-│   ├── main.cpp
-│   ├── bst.h
-│   ├── hashtable.h
-│   └── structures.h
-├── docs/
-│   └── sample_texts/
-└── README.md
-
 ## Limitations
 - Text documents only
 - Memory-based (no persistent storage)
